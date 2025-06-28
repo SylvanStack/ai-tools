@@ -7,7 +7,7 @@ import os.path
 import xlsxwriter
 from typing import List
 from application.settings import STATIC_ROOT, STATIC_URL
-from utils.file.file_base import FileBase
+from infra.utils.file.file_base import FileBase
 from pathlib import Path
 
 

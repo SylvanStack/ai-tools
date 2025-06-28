@@ -6,7 +6,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl import load_workbook, Workbook
 from application.settings import STATIC_ROOT, STATIC_URL
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
-from utils.file.file_base import FileBase
+from infra.utils.file.file_base import FileBase
 from .excel_schema import AlignmentModel, FontModel, PatternFillModel
 
 

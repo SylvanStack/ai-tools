@@ -5,7 +5,7 @@ from application.settings import STATIC_ROOT, BASE_DIR, STATIC_URL
 from fastapi import UploadFile
 import sys
 from infra.core.exception import CustomException
-from utils.file.file_base import FileBase
+from infra.utils.file.file_base import FileBase
 from aiopathlib import AsyncPath
 import aioshutil
 

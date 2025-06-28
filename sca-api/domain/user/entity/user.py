@@ -5,6 +5,7 @@ from sqlalchemy import String, Boolean, DateTime
 from passlib.context import CryptContext
 from .role import Role
 from .dept import Dept
+from .m2m import auth_user_roles, auth_user_depts
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -32,8 +33,8 @@ class User(BaseModel):
     wx_server_openid: Mapped[str | None] = mapped_column(String(255), comment="服务端微信平台openid")
     is_wx_server_openid: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否已有服务端微信平台openid")
 
-    roles: Mapped[set[Role]] = relationship(secondary=_auth_user_roles)
-    depts: Mapped[set[Dept]] = relationship(secondary=_auth_user_depts)
+    roles: Mapped[set[Role]] = relationship(secondary=auth_user_roles)
+    depts: Mapped[set[Dept]] = relationship(secondary=auth_user_depts)
 
     @staticmethod
     def get_password_hash(password: str) -> str:

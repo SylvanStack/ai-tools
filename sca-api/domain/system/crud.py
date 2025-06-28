@@ -24,7 +24,7 @@ class DictTypeDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(DictTypeDal, self).__init__()
         self.db = db
-        self.model = models.VadminDictType
+        self.model = models.DictType
         self.schema = schemas.DictTypeSimpleOut
 
     async def get_dicts_details(self, dict_types: list[str]) -> dict:
@@ -59,7 +59,7 @@ class DictDetailsDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(DictDetailsDal, self).__init__()
         self.db = db
-        self.model = models.VadminDictDetails
+        self.model = models.DictDetails
         self.schema = schemas.DictDetailsSimpleOut
 
 
@@ -68,7 +68,7 @@ class SettingsDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(SettingsDal, self).__init__()
         self.db = db
-        self.model = models.VadminSystemSettings
+        self.model = models.SystemSettings
         self.schema = schemas.SettingsSimpleOut
 
     async def get_tab_values(self, tab_id: int) -> dict:
@@ -129,13 +129,13 @@ class SettingsDal(DalBase):
 class SettingsTabDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(SettingsTabDal, self).__init__(db, models.VadminSystemSettingsTab, schemas.SettingsTabSimpleOut)
+        super(SettingsTabDal, self).__init__(db, models.SystemSettingsTab, schemas.SettingsTabSimpleOut)
 
     async def get_classify_tab_values(self, classify: list[str], hidden: bool | None = False) -> dict:
         """
         获取系统配置分类下的标签信息
         """
-        model = models.VadminSystemSettingsTab
+        model = models.SystemSettingsTab
         options = [joinedload(model.settings)]
         datas = await self.get_datas(
             limit=0,
@@ -151,7 +151,7 @@ class SettingsTabDal(DalBase):
         """
         获取系统配置标签下的标签信息
         """
-        model = models.VadminSystemSettingsTab
+        model = models.SystemSettingsTab
         options = [joinedload(model.settings)]
         datas = await self.get_datas(
             limit=0,
@@ -164,7 +164,7 @@ class SettingsTabDal(DalBase):
         return self.__generate_values(datas)
 
     @classmethod
-    def __generate_values(cls, datas: list[models.VadminSystemSettingsTab]) -> dict:
+    def __generate_values(cls, datas: list[models.SystemSettingsTab]) -> dict:
         """
         生成字典值
         """

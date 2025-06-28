@@ -84,7 +84,7 @@ class InitializeData:
         """
         生成部门详情数据
         """
-        await self.__generate_data("auth_dept", auth_models.VadminDept)
+        await self.__generate_data("auth_dept", auth_models.Dept)
 
     async def generate_user_dept(self):
         """
@@ -96,19 +96,19 @@ class InitializeData:
         """
         生成菜单数据
         """
-        await self.__generate_data("auth_menu", auth_models.VadminMenu)
+        await self.__generate_data("auth_menu", auth_models.Menu)
 
     async def generate_role(self):
         """
         生成角色
         """
-        await self.__generate_data("auth_role", auth_models.VadminRole)
+        await self.__generate_data("auth_role", auth_models.Role)
 
     async def generate_user(self):
         """
         生成用户
         """
-        await self.__generate_data("auth_user", auth_models.VadminUser)
+        await self.__generate_data("auth_user", auth_models.User)
 
     async def generate_user_role(self):
         """
@@ -120,37 +120,37 @@ class InitializeData:
         """
         生成系统配置分类数据
         """
-        await self.__generate_data("system_settings_tab", system_models.VadminSystemSettingsTab)
+        await self.__generate_data("system_settings_tab", system_models.SystemSettingsTab)
 
     async def generate_system_config(self):
         """
         生成系统配置数据
         """
-        await self.__generate_data("system_settings", system_models.VadminSystemSettings)
+        await self.__generate_data("system_settings", system_models.SystemSettings)
 
     async def generate_dict_type(self):
         """
         生成字典类型数据
         """
-        await self.__generate_data("system_dict_type", system_models.VadminDictType)
+        await self.__generate_data("system_dict_type", system_models.DictType)
 
     async def generate_dict_details(self):
         """
         生成字典详情数据
         """
-        await self.__generate_data("system_dict_details", system_models.VadminDictDetails)
+        await self.__generate_data("system_dict_details", system_models.DictDetails)
 
     async def generate_help_issue_category(self):
         """
         生成常见问题类别数据
         """
-        await self.__generate_data("help_issue_category", help_models.VadminIssueCategory)
+        await self.__generate_data("help_issue_category", help_models.IssueCategory)
 
     async def generate_help_issue(self):
         """
         生成常见问题详情数据
         """
-        await self.__generate_data("help_issue", help_models.VadminIssue)
+        await self.__generate_data("help_issue", help_models.Issue)
 
     async def run(self, env: Environment = Environment.pro):
         """

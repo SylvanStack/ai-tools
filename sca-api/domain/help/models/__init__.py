@@ -1,4 +1,4 @@
 
 
 
-from .issue import VadminIssue, VadminIssueCategory
+from .issue import Issue, IssueCategory

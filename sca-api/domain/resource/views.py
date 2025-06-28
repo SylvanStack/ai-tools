@@ -16,7 +16,7 @@ app = APIRouter()
 ###########################################################
 @app.get("/images", summary="获取图片列表")
 async def get_images_list(p: params.ImagesParams = Depends(), auth: Auth = Depends(FullAdminAuth())):
-    model = models.VadminImages
+    model = models.Images
     v_options = [joinedload(model.create_user)]
     v_schema = schemas.ImagesOut
     datas, count = await crud.ImagesDal(auth.db).get_datas(

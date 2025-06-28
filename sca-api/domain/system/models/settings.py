@@ -1,9 +1,9 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from db.db_base import BaseModel
+from infra.db.db_base import BaseModel
 from sqlalchemy import String, Integer, ForeignKey, Boolean, Text
 
 
-class VadminSystemSettingsTab(BaseModel):
+class SystemSettingsTab(BaseModel):
     __tablename__ = "system_settings_tab"
     __table_args__ = ({'comment': '系统配置分类表'})
 
@@ -14,10 +14,10 @@ class VadminSystemSettingsTab(BaseModel):
     hidden: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否隐藏")
     disabled: Mapped[bool] = mapped_column(Boolean, default=False, comment="是否禁用")
 
-    settings: Mapped[list["VadminSystemSettings"]] = relationship(back_populates="tab")
+    settings: Mapped[list["SystemSettings"]] = relationship(back_populates="tab")
 
 
-class VadminSystemSettings(BaseModel):
+class SystemSettings(BaseModel):
     __tablename__ = "system_settings"
     __table_args__ = ({'comment': '系统配置表'})
 
@@ -32,4 +32,4 @@ class VadminSystemSettings(BaseModel):
         ForeignKey("system_settings_tab.id", ondelete='CASCADE'),
         comment="关联tab标签"
     )
-    tab: Mapped[VadminSystemSettingsTab] = relationship(foreign_keys=tab_id, back_populates="settings")
+    tab: Mapped[SystemSettingsTab] = relationship(foreign_keys=tab_id, back_populates="settings")

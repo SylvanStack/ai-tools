@@ -16,7 +16,7 @@ app = APIRouter()
 ###########################################################
 @app.get("/issue/categorys", summary="获取类别列表")
 async def get_issue_categorys(p: params.IssueCategoryParams = Depends(), auth: Auth = Depends(AllUserAuth())):
-    model = models.VadminIssueCategory
+    model = models.IssueCategory
     options = [joinedload(model.create_user)]
     schema = schemas.IssueCategoryListOut
     datas, count = await crud.IssueCategoryDal(auth.db).get_datas(
@@ -59,7 +59,7 @@ async def get_issue_category(data_id: int, auth: Auth = Depends(AllUserAuth())):
 
 @app.get("/issue/categorys/platform/{platform}", summary="获取平台中的常见问题类别列表")
 async def get_issue_category_platform(platform: str, db: AsyncSession = Depends(db_getter)):
-    model = models.VadminIssueCategory
+    model = models.IssueCategory
     options = [joinedload(model.issues)]
     schema = schemas.IssueCategoryPlatformOut
     result = await crud.IssueCategoryDal(db).get_datas(
@@ -77,7 +77,7 @@ async def get_issue_category_platform(platform: str, db: AsyncSession = Depends(
 ###########################################################
 @app.get("/issues", summary="获取问题列表")
 async def get_issues(p: params.IssueParams = Depends(), auth: Auth = Depends(AllUserAuth())):
-    model = models.VadminIssue
+    model = models.Issue
     options = [joinedload(model.create_user), joinedload(model.category)]
     schema = schemas.IssueListOut
     datas, count = await crud.IssueDal(auth.db).get_datas(

@@ -1,1 +1,1 @@
-from .images import VadminImages
+from .images import Images

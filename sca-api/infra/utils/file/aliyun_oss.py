@@ -4,9 +4,9 @@ import oss2  # 安装依赖库：pip install oss2
 from oss2.models import PutObjectResult
 from infra.core.exception import CustomException
 from infra.core.logger import logger
-from utils import status
-from utils.file.file_manage import FileManage
-from utils.file.file_base import FileBase
+from infra.utils import status
+from infra.utils.file.file_manage import FileManage
+from infra.utils.file.file_base import FileBase
 
 
 class BucketConf(BaseModel):

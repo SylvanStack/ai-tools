@@ -1,2 +1,2 @@
-from .dict import VadminDictType, VadminDictDetails
-from .settings import VadminSystemSettings, VadminSystemSettingsTab
+from .dict import DictType, DictDetails
+from .settings import SystemSettings, SystemSettingsTab

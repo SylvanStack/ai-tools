@@ -1,12 +1,12 @@
 
 
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from domain.user.models import VadminUser
-from db.db_base import BaseModel
+from domain.user.entity import User
+from infra.db.db_base import BaseModel
 from sqlalchemy import String, Boolean, Integer, ForeignKey, Text
 
 
-class VadminIssueCategory(BaseModel):
+class IssueCategory(BaseModel):
     __tablename__ = "help_issue_category"
     __table_args__ = ({'comment': '常见问题类别表'})
 
@@ -14,17 +14,17 @@ class VadminIssueCategory(BaseModel):
     platform: Mapped[str] = mapped_column(String(8), index=True, nullable=False, comment="展示平台")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, comment="是否可见")
 
-    issues: Mapped[list["VadminIssue"]] = relationship(back_populates='category')
+    issues: Mapped[list["Issue"]] = relationship(back_populates='category')
 
     create_user_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("auth_user.id", ondelete='RESTRICT'),
         comment="创建人"
     )
-    create_user: Mapped[VadminUser] = relationship(foreign_keys=create_user_id)
+    create_user: Mapped[User] = relationship(foreign_keys=create_user_id)
 
 
-class VadminIssue(BaseModel):
+class Issue(BaseModel):
     __tablename__ = "help_issue"
     __table_args__ = ({'comment': '常见问题记录表'})
 
@@ -33,7 +33,7 @@ class VadminIssue(BaseModel):
         ForeignKey("help_issue_category.id", ondelete='CASCADE'),
         comment="类别"
     )
-    category: Mapped[list["VadminIssueCategory"]] = relationship(foreign_keys=category_id, back_populates='issues')
+    category: Mapped[list["IssueCategory"]] = relationship(foreign_keys=category_id, back_populates='issues')
 
     title: Mapped[str] = mapped_column(String(255), index=True, nullable=False, comment="标题")
     content: Mapped[str] = mapped_column(Text, comment="内容")
@@ -45,4 +45,4 @@ class VadminIssue(BaseModel):
         ForeignKey("auth_user.id", ondelete='RESTRICT'),
         comment="创建人"
     )
-    create_user: Mapped[VadminUser] = relationship(foreign_keys=create_user_id)
+    create_user: Mapped[User] = relationship(foreign_keys=create_user_id)

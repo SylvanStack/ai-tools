@@ -5,11 +5,11 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 from infra.core.logger import logger
 from infra.core.database import db_getter
-from apps..system.models.settings import SystemSettingsTab
+from domain.system.models.settings import SystemSettingsTab
 import json
 from redis.asyncio.client import Redis
 from infra.core.exception import CustomException
-from utils import status
+from infra.utils import status
 
 
 class Cache:

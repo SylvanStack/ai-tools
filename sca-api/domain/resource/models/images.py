@@ -1,10 +1,10 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from domain.user.models import VadminUser
+from domain.user.models import User
 from db.db_base import BaseModel
 from sqlalchemy import String, ForeignKey, Integer
 
 
-class VadminImages(BaseModel):
+class Images(BaseModel):
     __tablename__ = "resource_images"
     __table_args__ = ({'comment': '图片素材表'})
 
@@ -16,4 +16,4 @@ class VadminImages(BaseModel):
         ForeignKey("auth_user.id", ondelete='RESTRICT'),
         comment="创建人"
     )
-    create_user: Mapped[VadminUser] = relationship(foreign_keys=create_user_id)
+    create_user: Mapped[User] = relationship(foreign_keys=create_user_id)

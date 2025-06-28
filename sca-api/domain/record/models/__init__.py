@@ -1,2 +1,2 @@
-from .login import VadminLoginRecord
-from .sms import VadminSMSSendRecord
+from .login import LoginRecord
+from .sms import SMSSendRecord

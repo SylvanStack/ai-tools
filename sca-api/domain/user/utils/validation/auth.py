@@ -5,7 +5,7 @@ from application import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.user.entity import User
 from infra.core.exception import CustomException
-from utils import status
+from infra.utils import status
 from datetime import timedelta, datetime
 from domain.user.crud import UserDal
 

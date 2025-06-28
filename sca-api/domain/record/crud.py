@@ -11,7 +11,7 @@ class LoginRecordDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(LoginRecordDal, self).__init__()
         self.db = db
-        self.model = models.VadminLoginRecord
+        self.model = models.LoginRecord
         self.schema = schemas.LoginRecordSimpleOut
 
     async def get_user_distribute(self) -> list[dict]:
@@ -66,7 +66,7 @@ class SMSSendRecordDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(SMSSendRecordDal, self).__init__()
         self.db = db
-        self.model = models.VadminSMSSendRecord
+        self.model = models.SMSSendRecord
         self.schema = schemas.SMSSendRecordSimpleOut
 
 

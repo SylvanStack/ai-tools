@@ -5,8 +5,8 @@ from aiopathlib import AsyncPath
 from fastapi import UploadFile
 from application.settings import TEMP_DIR, STATIC_ROOT
 from infra.core.exception import CustomException
-from utils import status
-from utils.tools import generate_string
+from infra.utils import status
+from infra.utils.tools import generate_string
 
 
 class FileBase:

@@ -13,7 +13,7 @@ from starlette.requests import Request as StarletteRequest
 from user_agents import parse
 
 
-class VadminLoginRecord(BaseModel):
+class LoginRecord(BaseModel):
     __tablename__ = "record_login"
     __table_args__ = ({'comment': '登录记录表'})
 
@@ -64,7 +64,7 @@ class VadminLoginRecord(BaseModel):
         browser = f"{user_agent.browser.family} {user_agent.browser.version_string}"
         ip = IPManage(req.client.host)
         location = await ip.parse()
-        obj = VadminLoginRecord(
+        obj = LoginRecord(
             **location.dict(),
             telephone=data.telephone if data.telephone else data.code,
             status=status,

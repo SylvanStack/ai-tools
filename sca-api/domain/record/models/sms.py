@@ -3,7 +3,7 @@ from db.db_base import BaseModel
 from sqlalchemy import Integer, String, Boolean, ForeignKey
 
 
-class VadminSMSSendRecord(BaseModel):
+class SMSSendRecord(BaseModel):
     __tablename__ = "record_sms_send"
     __table_args__ = ({'comment': '短信发送记录表'})
 
