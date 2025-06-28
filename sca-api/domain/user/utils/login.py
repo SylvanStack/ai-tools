@@ -24,7 +24,7 @@ from infra.utils.response import SuccessResponse, ErrorResponse
 from application import settings
 from .login_manage import LoginManage
 from .validation import LoginForm, WXLoginForm
-from domain.record.entity import LoginRecord
+from domain.record.models import LoginRecord
 from domain.user.crud import MenuDal, UserDal
 from domain.user.entity import User
 from .current import FullAdminAuth

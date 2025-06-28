@@ -5,7 +5,7 @@ from application.settings import DEFAULT_AUTH_ERROR_MAX_NUMBER, DEMO, REDIS_DB_E
 from domain.user import crud, vo
 from infra.core.database import redis_getter
 from infra.core.validator import vali_telephone
-from utils.count import Count
+from infra.utils.count import Count
 
 
 class LoginForm(BaseModel):
@@ -27,7 +27,7 @@ class WXLoginForm(BaseModel):
 
 class LoginResult(BaseModel):
     status: bool | None = False
-    user: schemas.UserPasswordOut | None = None
+    user: vo.UserPasswordOut | None = None
     msg: str | None = None
 
     class Config:
