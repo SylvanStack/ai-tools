@@ -7,8 +7,12 @@ from alembic import context
 
 import os
 import sys
+from dotenv import load_dotenv
 
 from infra.core.database import Base
+
+# 加载环境变量
+load_dotenv()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -32,6 +36,12 @@ fileConfig(config.config_file_name)
 # 添加当前项目路径到环境变量
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
+
+# 从环境变量中读取数据库连接参数
+section = config.config_ini_section
+config.set_section_option(section, "sqlalchemy.url", 
+    f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '123456')}@"
+    f"{os.getenv('DB_HOST', '127.0.0.1')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'sca-api')}")
 
 # 导入项目中的基本映射类，与 需要迁移的 ORM 模型
 from apps.user.models import *

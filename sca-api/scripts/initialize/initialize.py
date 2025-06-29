@@ -40,8 +40,13 @@ class InitializeData:
         """
         模型迁移映射到数据库
         """
-        subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'], cwd=BASE_DIR)
-        subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
+        try:
+            # 先尝试直接升级到head
+            subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
+        except subprocess.CalledProcessError:
+            # 如果失败，则创建新的迁移并升级
+            subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'], cwd=BASE_DIR)
+            subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
         print(f"环境：{env}  {VERSION} 数据库表迁移完成")
 
     def __serializer_data(self):
@@ -75,10 +80,13 @@ class InitializeData:
         async_session = db_getter()
         db = await async_session.__anext__()
         datas = self.datas.get(table_name)
-        await db.execute(insert(model), datas)
-        await db.flush()
-        await db.commit()
-        print(f"{table_name} 表数据已生成")
+        if datas:
+            await db.execute(insert(model), datas)
+            await db.flush()
+            await db.commit()
+            print(f"{table_name} 表数据已生成")
+        else:
+            print(f"{table_name} 表没有数据需要生成")
 
     async def generate_dept(self):
         """

@@ -20,8 +20,8 @@ from infra.utils.tools import test_password
 from . import models, schemas
 from application import settings
 from infra.utils.excel.excel_manage import ExcelManage
-# from apps.system import crud as system_crud
-from apps.help import models as help_entity
+from apps.system import crud as system_crud
+from apps.help import models as help_models
 import copy
 from infra.utils import status
 from infra.utils.wx.oauth import WXOAuth
@@ -432,7 +432,7 @@ class RoleDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(RoleDal, self).__init__()
         self.db = db
-        self.model = entity.Role
+        self.model = models.Role
         self.schema = schemas.RoleSimpleOut
 
     async def create_data(
@@ -523,7 +523,7 @@ class RoleDal(DalBase):
         :param v_soft: 是否执行软删除
         :param kwargs: 其他更新字段
         """
-        user_count = await UserDal(self.db).get_count(v_join=[["roles"]], v_where=[entity.Role.id.in_(ids)])
+        user_count = await UserDal(self.db).get_count(v_join=[["roles"]], v_where=[models.Role.id.in_(ids)])
         if user_count > 0:
             raise CustomException("无法删除存在用户关联的角色", code=400)
         return await super(RoleDal, self).delete_datas(ids, v_soft, **kwargs)
@@ -580,7 +580,7 @@ class MenuDal(DalBase):
             queryset = await self.db.scalars(sql)
             datas = list(queryset.all())
         else:
-            options = [joinedload(models.User.roles).subqueryload(entity.Role.menus)]
+            options = [joinedload(models.User.roles).subqueryload(models.Role.menus)]
             user = await UserDal(self.db).get_data(user.id, v_options=options)
             datas = set()
             for role in user.roles:
@@ -952,8 +952,8 @@ class TestDal(DalBase):
         # 	_auth_dept.is_delete
         # FROM
         # 	_auth_user
-        # 	JOIN _auth_user_depts ON _auth_user.id = _auth_user_depts.user_id
-        # 	JOIN _auth_dept ON _auth_dept.id = _auth_user_depts.dept_id
+        # 	JOIN auth_user_depts ON _auth_user.id = auth_user_depts.user_id
+        # 	JOIN _auth_dept ON _auth_dept.id = auth_user_depts.dept_id
         # WHERE
         # 	_auth_dept.is_delete = FALSE
         # 	AND _auth_user.id = 1
@@ -968,8 +968,8 @@ class TestDal(DalBase):
         dept_alias = aliased(models.Dept)
         v_options = [contains_eager(self.model.depts, alias=dept_alias)]
         v_outer_join = [
-            [entity._auth_user_depts, self.model.id == entity._auth_user_depts.c.user_id],
-            [dept_alias, and_(dept_alias.id == entity._auth_user_depts.c.dept_id, dept_alias.owner == "张伟")]
+            [models.auth_user_depts, self.model.id == models.auth_user_depts.c.user_id],
+            [dept_alias, and_(dept_alias.id == models.auth_user_depts.c.dept_id, dept_alias.owner == "张伟")]
         ]
         datas: list[models.User] = await self.get_datas(
             limit=0,
@@ -987,10 +987,10 @@ class TestDal(DalBase):
         # DeptAlias = aliased(models.Dept)
         # sql = select(self.model).where(self.model.is_delete == false())
         # sql = sql.options(contains_eager(self.model.depts, alias=DeptAlias))
-        # sql = sql.outerjoin(models._auth_user_depts, self.model.id == models._auth_user_depts.c.user_id)
+        # sql = sql.outerjoin(models.auth_user_depts, self.model.id == models.auth_user_depts.c.user_id)
         # sql = sql.outerjoin(
         #     DeptAlias,
-        #     and_(DeptAlias.id == models._auth_user_depts.c.dept_id, DeptAlias.owner == "张伟")
+        #     and_(DeptAlias.id == models.auth_user_depts.c.dept_id, DeptAlias.owner == "张伟")
         # )
         # self.db.expire_all()
         # queryset = await self.db.scalars(sql)
@@ -1057,9 +1057,9 @@ class TestDal(DalBase):
         """
         print("==============================has 方法使用案例1=========================================")
         # 用户（models.User）与 帮助问题（models.Issue）为多对一关系
-        # 查找出只有满足关联了用户名称为 "kinit" 的所有帮助问题，没有关联的则不会查询出来
-        sql1 = select(help_entity.Issue).where(
-            help_entity.Issue.create_user.has(models.User.name == "kinit")
+        # 查找出只有满足关联了用户名称为 "sca-api" 的所有帮助问题，没有关联的则不会查询出来
+        sql1 = select(help_models.Issue).where(
+            help_models.Issue.create_user.has(models.User.name == "sca-api")
         )
         queryset1 = await self.db.scalars(sql1)
         result1 = queryset1.unique().all()

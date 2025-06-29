@@ -57,7 +57,7 @@ class FileManage(FileBase):
         保存文件到本地
         :return: 示例：
         {
-            'local_path': 'D:\\project\\kinit_dev\\kinit-api\\static\\system\\20240301\\1709303205HuYB3mrC.png',
+            'local_path': 'D:\\project\\sca-api_dev\\sca-api-api\\static\\system\\20240301\\1709303205HuYB3mrC.png',
             'remote_path': '/media/system/20240301/1709303205HuYB3mrC.png'
         }
         """

@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 """
 系统版本
 """
-VERSION = "3.10.1"
+VERSION = "3.12.1"
 
 """安全警告: 不要在生产中打开调试运行!"""
 DEBUG = True
@@ -32,7 +32,7 @@ DEMO_BLACK_LIST_PATH = [
 if DEBUG:
     from .config.dev import *
 else:
-    from .config.prrd import *
+    from .config.prod import *
 
 """项目根目录"""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -139,4 +139,4 @@ MIDDLEWARES = [
 定时任务配置
 """
 # 发布/订阅通道，与定时任务程序相互关联，请勿随意更改
-SUBSCRIBE = 'kinit_queue'
+SUBSCRIBE = 'sca-api_queue'

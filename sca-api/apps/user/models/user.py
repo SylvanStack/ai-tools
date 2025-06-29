@@ -11,7 +11,7 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 class User(BaseModel):
-    __tablename__ = "_auth_user"
+    __tablename__ = "auth_user"
     __table_args__ = ({'comment': '用户表'})
 
     avatar: Mapped[str | None] = mapped_column(String(500), comment='头像')
