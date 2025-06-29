@@ -5,7 +5,7 @@ import jwt
 from infra.core.database import redis_getter
 from infra.utils.sms.code import CodeSMS
 from .validation import LoginValidation, LoginForm, LoginResult
-from apps.user import entity
+from apps.user import models
 
 
 class LoginManage:
@@ -14,11 +14,11 @@ class LoginManage:
     """
 
     @LoginValidation
-    async def password_login(self, data: LoginForm, user: entity.User, **kwargs) -> LoginResult:
+    async def password_login(self, data: LoginForm, user: models.User, **kwargs) -> LoginResult:
         """
         验证用户密码
         """
-        result = entity.User.verify_password(data.password, user.password)
+        result = models.User.verify_password(data.password, user.password)
         if result:
             return LoginResult(status=True, msg="验证成功")
         return LoginResult(status=False, msg="手机号或密码错误")

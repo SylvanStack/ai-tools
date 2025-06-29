@@ -34,7 +34,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 # 导入项目中的基本映射类，与 需要迁移的 ORM 模型
-from apps.user.entity import *
+from apps.user.models import *
 from apps.system.models import *
 from apps.record.models import *
 from apps.help.models import *

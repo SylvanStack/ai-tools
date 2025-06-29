@@ -26,7 +26,7 @@ from .login_manage import LoginManage
 from .validation import LoginForm, WXLoginForm
 from apps.record.models import LoginRecord
 from apps.user.crud import MenuDal, UserDal
-from apps.user.entity import User
+from apps.user.models import User
 from .current import FullAdminAuth
 from .validation.auth import Auth
 from infra.utils.wx.oauth import WXOAuth

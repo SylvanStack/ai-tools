@@ -3,7 +3,7 @@ import jwt
 from pydantic import BaseModel
 from application import settings
 from sqlalchemy.ext.asyncio import AsyncSession
-from apps.user.entity import User
+from apps.user.models import User
 from infra.core.exception import CustomException
 from infra.utils import status
 from datetime import timedelta, datetime

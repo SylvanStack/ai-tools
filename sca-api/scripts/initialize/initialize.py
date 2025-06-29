@@ -4,7 +4,7 @@ from infra.core.database import db_getter
 from infra.utils.excel.excel_manage import ExcelManage
 from application.settings import BASE_DIR, VERSION
 import os
-from apps.user import entity as auth_models
+from apps.user import models as auth_models
 from apps.system import models as system_models
 from apps.help import models as help_models
 import subprocess

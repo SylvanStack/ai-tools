@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Body, UploadFile, Request
 from sqlalchemy.orm import joinedload
 from infra.core.database import redis_getter
 from infra.utils.response import SuccessResponse, ErrorResponse
-from . import schemas, crud, entity
+from . import schemas, crud, models
 from infra.core.dependencies import IdList
 from apps.user.utils.current import AllUserAuth, FullAdminAuth, OpenAuth
 from apps.user.utils.validation.auth import Auth

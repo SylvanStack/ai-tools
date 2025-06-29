@@ -17,7 +17,7 @@ from infra.utils.send_email import EmailSender
 from infra.utils.sms.reset_passwd import ResetPasswordSMS
 from .params import UserParams
 from infra.utils.tools import test_password
-from . import entity, schemas
+from . import models, schemas
 from application import settings
 from infra.utils.excel.excel_manage import ExcelManage
 # from apps.system import crud as system_crud
@@ -40,13 +40,13 @@ class UserDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(UserDal, self).__init__()
         self.db = db
-        self.model = entity.User
+        self.model = models.User
         self.schema = schemas.UserSimpleOut
 
     async def recursion_get_dept_ids(
             self,
-            user: entity.User,
-            depts: list[entity.Dept] = None,
+            user: models.User,
+            depts: list[models.Dept] = None,
             dept_ids: list[int] = None
     ) -> list:
         """
@@ -70,7 +70,7 @@ class UserDal(DalBase):
         else:
             return []
 
-    async def update_login_info(self, user: entity.User, last_ip: str) -> None:
+    async def update_login_info(self, user: models.User, last_ip: str) -> None:
         """
         更新当前登录信息
         :param user: 用户对象
@@ -154,7 +154,7 @@ class UserDal(DalBase):
         await self.flush(obj)
         return await self.out_dict(obj, None, v_return_obj, v_schema)
 
-    async def reset_current_password(self, user: entity.User, data: schemas.ResetPwd) -> None:
+    async def reset_current_password(self, user: models.User, data: schemas.ResetPwd) -> None:
         """
         重置密码
         :param user:
@@ -170,7 +170,7 @@ class UserDal(DalBase):
         user.is_reset_password = True
         await self.flush(user)
 
-    async def update_current_info(self, user: entity.User, data: schemas.UserUpdateBaseInfo) -> Any:
+    async def update_current_info(self, user: models.User, data: schemas.UserUpdateBaseInfo) -> Any:
         """
         更新当前用户基本信息
         :param user:
@@ -382,7 +382,7 @@ class UserDal(DalBase):
                 user["send_sms_msg"] = "未获取到邮箱地址"
         return result
 
-    async def update_current_avatar(self, user: entity.User, file: UploadFile) -> str:
+    async def update_current_avatar(self, user: models.User, file: UploadFile) -> str:
         """
         更新当前用户头像
         :param user:
@@ -394,7 +394,7 @@ class UserDal(DalBase):
         await self.flush(user)
         return result
 
-    async def update_wx_server_openid(self, code: str, user: entity.User, redis: Redis) -> bool:
+    async def update_wx_server_openid(self, code: str, user: models.User, redis: Redis) -> bool:
         """
         更新用户服务端微信平台openid
         :param code:
@@ -534,7 +534,7 @@ class MenuDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(MenuDal, self).__init__()
         self.db = db
-        self.model = entity.Menu
+        self.model = models.Menu
         self.schema = schemas.MenuSimpleOut
 
     async def get_tree_list(self, mode: int) -> list:
@@ -560,7 +560,7 @@ class MenuDal(DalBase):
             raise CustomException("获取菜单失败，无可用选项", code=400)
         return self.menus_order(menus)
 
-    async def get_routers(self, user: entity.User) -> list:
+    async def get_routers(self, user: models.User) -> list:
         """
         获取路由表
         declare interface AppCustomRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
@@ -580,7 +580,7 @@ class MenuDal(DalBase):
             queryset = await self.db.scalars(sql)
             datas = list(queryset.all())
         else:
-            options = [joinedload(entity.User.roles).subqueryload(entity.Role.menus)]
+            options = [joinedload(models.User.roles).subqueryload(entity.Role.menus)]
             user = await UserDal(self.db).get_data(user.id, v_options=options)
             datas = set()
             for role in user.roles:
@@ -592,7 +592,7 @@ class MenuDal(DalBase):
         menus = self.generate_router_tree(datas, roots)
         return self.menus_order(menus)
 
-    def generate_router_tree(self, menus: list[entity.Menu], nodes: filter, name: str = "") -> list:
+    def generate_router_tree(self, menus: list[models.Menu], nodes: filter, name: str = "") -> list:
         """
         生成路由树
         :param menus: 总菜单列表
@@ -617,7 +617,7 @@ class MenuDal(DalBase):
             data.append(router.model_dump())
         return data
 
-    def generate_tree_list(self, menus: list[entity.Menu], nodes: filter) -> list:
+    def generate_tree_list(self, menus: list[models.Menu], nodes: filter) -> list:
         """
         生成菜单树列表
         :param menus: 总菜单列表
@@ -633,7 +633,7 @@ class MenuDal(DalBase):
             data.append(router.model_dump())
         return data
 
-    def generate_tree_options(self, menus: list[entity.Menu], nodes: filter) -> list:
+    def generate_tree_options(self, menus: list[models.Menu], nodes: filter) -> list:
         """
         生成菜单树选择项
         :param menus:总菜单列表
@@ -684,7 +684,7 @@ class DeptDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(DeptDal, self).__init__()
         self.db = db
-        self.model = entity.Dept
+        self.model = models.Dept
         self.schema = schemas.DeptSimpleOut
 
     async def get_tree_list(self, mode: int) -> list:
@@ -710,7 +710,7 @@ class DeptDal(DalBase):
             raise CustomException("获取部门失败，无可用选项", code=400)
         return self.dept_order(menus)
 
-    def generate_tree_list(self, depts: list[entity.Dept], nodes: filter) -> list:
+    def generate_tree_list(self, depts: list[models.Dept], nodes: filter) -> list:
         """
         生成部门树列表
         :param depts: 总部门列表
@@ -725,7 +725,7 @@ class DeptDal(DalBase):
             data.append(router.model_dump())
         return data
 
-    def generate_tree_options(self, depts: list[entity.Dept], nodes: filter) -> list:
+    def generate_tree_options(self, depts: list[models.Dept], nodes: filter) -> list:
         """
         生成部门树选择项
         :param depts: 总部门列表
@@ -761,7 +761,7 @@ class TestDal(DalBase):
     def __init__(self, db: AsyncSession):
         super(TestDal, self).__init__()
         self.db = db
-        self.model = entity.User
+        self.model = models.User
 
     async def test_session_cache(self):
         """
@@ -796,13 +796,13 @@ class TestDal(DalBase):
         :return:
         """
         # 第一次查询，并加载用户的所有关联部门项
-        sql1 = select(entity.User).where(entity.User.id == 1).options(joinedload(entity.User.depts))
+        sql1 = select(models.User).where(models.User.id == 1).options(joinedload(models.User.depts))
         queryset1 = await self.db.scalars(sql1)
         user1 = queryset1.unique().first()
         print(f"用户编号：{user1.id} 用户姓名：{user1.name} 关联部门 {[i.name for i in user1.depts]}")
 
         # 第二次即使没有加载用户关联的部门，同样可以访问，因为这里会默认从会话缓存中获取
-        sql2 = select(entity.User).where(entity.User.id == 1)
+        sql2 = select(models.User).where(models.User.id == 1)
         queryset2 = await self.db.scalars(sql2)
         user2 = queryset2.first()
         print(f"用户编号：{user2.id} 用户姓名：{user2.name} 关联部门 {[i.name for i in user2.depts]}")
@@ -820,13 +820,13 @@ class TestDal(DalBase):
         :return:
         """
         # 第一次查询，并加载用户的所有关联部门项，但是不访问用户的属性
-        sql1 = select(entity.User).where(entity.User.id == 1).options(joinedload(entity.User.depts))
+        sql1 = select(models.User).where(models.User.id == 1).options(joinedload(models.User.depts))
         queryset1 = await self.db.scalars(sql1)
         user1 = queryset1.unique().first()
         print(f"没有访问属性，也会产生缓存")
 
         # 第二次即使没有加载用户关联的部门，同样可以访问，因为这里会默认从会话缓存中获取
-        sql2 = select(entity.User).where(entity.User.id == 1)
+        sql2 = select(models.User).where(models.User.id == 1)
         queryset2 = await self.db.scalars(sql2)
         user2 = queryset2.first()
         print(f"用户编号：{user2.id} 用户姓名：{user2.name} 关联部门 {[i.name for i in user2.depts]}")
@@ -844,14 +844,14 @@ class TestDal(DalBase):
         :return:
         """
         # 第一次查询出所有用户，并加载用户的所有关联部门项
-        sql1 = select(entity.User).options(joinedload(entity.User.depts))
+        sql1 = select(models.User).options(joinedload(models.User.depts))
         queryset1 = await self.db.scalars(sql1)
         datas1 = queryset1.unique().all()
         for data in datas1:
             print(f"用户编号：{data.id} 用户姓名：{data.name} 关联部门 {[i.name for i in data.depts]}")
 
         # 第二次即使没有加载用户关联的部门，同样可以访问，因为这里会默认从会话缓存中获取
-        sql2 = select(entity.User)
+        sql2 = select(models.User)
         queryset2 = await self.db.scalars(sql2)
         datas2 = queryset2.all()
         for data in datas2:
@@ -870,7 +870,7 @@ class TestDal(DalBase):
         :return:
         """
         # 第一次查询，并加载用户的所有关联部门项
-        sql1 = select(entity.User).where(entity.User.id == 1).options(joinedload(entity.User.depts))
+        sql1 = select(models.User).where(models.User.id == 1).options(joinedload(models.User.depts))
         queryset1 = await self.db.scalars(sql1)
         user1 = queryset1.unique().first()
         print(f"用户编号：{user1.id} 用户姓名：{user1.name} 关联部门 {[i.name for i in user1.depts]}")
@@ -879,7 +879,7 @@ class TestDal(DalBase):
         self.db.expire(user1)
 
         # 第二次查询会发现会话中没有该对象的缓存，会重新在数据库中查询
-        sql2 = select(entity.User).where(entity.User.id == 1)
+        sql2 = select(models.User).where(models.User.id == 1)
         queryset2 = await self.db.scalars(sql2)
         user2 = queryset2.first()
         try:
@@ -900,7 +900,7 @@ class TestDal(DalBase):
         :return:
         """
         # 第一次查询，并加载用户的所有关联部门项
-        sql = select(entity.User).where(entity.User.id == 1).options(joinedload(entity.User.depts))
+        sql = select(models.User).where(models.User.id == 1).options(joinedload(models.User.depts))
         queryset = await self.db.scalars(sql)
         user = queryset.unique().first()
         print(f"用户编号：{user.id} 用户姓名：{user.name} 关联部门 {[i.name for i in user.depts]}")
@@ -927,8 +927,8 @@ class TestDal(DalBase):
         # 设定用户编号为：1
         user_id = 1
 
-        sql = select(entity.Dept).where(entity.Dept.is_delete == false())
-        sql = sql.join_from(entity.User, entity.User.depts).where(entity.User.id == user_id)
+        sql = select(models.Dept).where(models.Dept.is_delete == false())
+        sql = sql.join_from(models.User, models.User.depts).where(models.User.id == user_id)
         queryset = await self.db.scalars(sql)
         result = queryset.unique().all()
         for dept in result:
@@ -965,13 +965,13 @@ class TestDal(DalBase):
         :return:
         """
         # 封装查询语句
-        dept_alias = aliased(entity.Dept)
+        dept_alias = aliased(models.Dept)
         v_options = [contains_eager(self.model.depts, alias=dept_alias)]
         v_outer_join = [
             [entity._auth_user_depts, self.model.id == entity._auth_user_depts.c.user_id],
             [dept_alias, and_(dept_alias.id == entity._auth_user_depts.c.dept_id, dept_alias.owner == "张伟")]
         ]
-        datas: list[entity.User] = await self.get_datas(
+        datas: list[models.User] = await self.get_datas(
             limit=0,
             v_outer_join=v_outer_join,
             v_options=v_options,
@@ -1005,7 +1005,7 @@ class TestDal(DalBase):
         获取用户部门列表
         :return:
         """
-        sql1 = select(entity.User).options(joinedload(entity.User.depts))
+        sql1 = select(models.User).options(joinedload(models.User.depts))
         queryset1 = await self.db.scalars(sql1)
         datas1 = queryset1.unique().all()
         for data in datas1:
@@ -1022,7 +1022,7 @@ class TestDal(DalBase):
         print("==============================any 方法使用案例1=========================================")
         # 用户表（models.User）与 部门表（Dept）为多对多关系
         # 查找出只有满足关联了部门名称为 "人事一部" 的所有用户，没有关联的则不会查询出来
-        sql1 = select(entity.User).where(entity.User.depts.any(entity.Dept.name == "人事一部"))
+        sql1 = select(models.User).where(models.User.depts.any(models.Dept.name == "人事一部"))
         queryset1 = await self.db.scalars(sql1)
         result1 = queryset1.unique().all()
         for data in result1:
@@ -1030,7 +1030,7 @@ class TestDal(DalBase):
 
         print("==============================any 方法使用案例2=========================================")
         # 案例1 取反，查找出只有满足没有关联了部门名称为 "人事一部" 的所有用户，关联的则不会查询出来
-        sql2 = select(entity.User).where(~entity.User.depts.any(entity.Dept.name == "人事一部"))
+        sql2 = select(models.User).where(~models.User.depts.any(models.Dept.name == "人事一部"))
         queryset2 = await self.db.scalars(sql2)
         result2 = queryset2.unique().all()
         for data in result2:
@@ -1038,7 +1038,7 @@ class TestDal(DalBase):
 
         print("==============================any 方法使用案例3=========================================")
         # 查询出没有关联部门的所有用户
-        sql3 = select(entity.User).where(~entity.User.depts.any())
+        sql3 = select(models.User).where(~models.User.depts.any())
         queryset3 = await self.db.scalars(sql3)
         result3 = queryset3.unique().all()
         for data in result3:
@@ -1059,7 +1059,7 @@ class TestDal(DalBase):
         # 用户（models.User）与 帮助问题（models.Issue）为多对一关系
         # 查找出只有满足关联了用户名称为 "kinit" 的所有帮助问题，没有关联的则不会查询出来
         sql1 = select(help_entity.Issue).where(
-            help_entity.Issue.create_user.has(entity.User.name == "kinit")
+            help_entity.Issue.create_user.has(models.User.name == "kinit")
         )
         queryset1 = await self.db.scalars(sql1)
         result1 = queryset1.unique().all()
