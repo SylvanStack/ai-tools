@@ -57,7 +57,7 @@ def create_app():
 
 @shell_app.command()
 def run(
-        host: str = typer.Option(default='0.0.0.0', help='监听主机IP，默认开放给本网络所有主机'),
+        host: str = typer.Option(default='127.0.0.1', help='监听主机IP，默认开放给本网络所有主机'),
         port: int = typer.Option(default=9000, help='监听端口')
 ):
     """

@@ -1,5 +1,3 @@
-
-
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from apps.user.models import User
 from infra.db.db_base import BaseModel
