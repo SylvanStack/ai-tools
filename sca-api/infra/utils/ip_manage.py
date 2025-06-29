@@ -43,7 +43,7 @@ class IPManage:
         out.ip = self.ip
         if not IP_PARSE_ENABLE:
             logger.warning(
-                "未开启IP地址数据解析，无法获取到IP所属地，请在application/config/production.py:IP_PARSE_ENABLE中开启！")
+                "未开启IP地址数据解析，无法获取到IP所属地，请在application/config/prod.py:IP_PARSE_ENABLE中开启！")
             return out
         async with aiohttp.ClientSession(connector=TCPConnector(ssl=False)) as session:
             async with session.get(self.url) as resp:

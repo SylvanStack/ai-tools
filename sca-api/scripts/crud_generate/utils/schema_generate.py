@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-# @version        : 1.0
-# @Create Time    : 2024/1/12 17:28
-# @File           : schema_generate.py
-# @IDE            : PyCharm
-# @desc           : schema 代码生成
-
-
 import sys
 from typing import Type
 import inspect

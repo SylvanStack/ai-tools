@@ -26,6 +26,8 @@ class InitializeData:
     """
 
     SCRIPT_DIR = os.path.join(BASE_DIR, 'scripts', 'initialize')
+    print("初始化数据开始...")
+    print("SCRIPT_DIR:" + SCRIPT_DIR)
 
     def __init__(self):
         self.sheet_names = []
@@ -40,13 +42,12 @@ class InitializeData:
         """
         模型迁移映射到数据库
         """
-        try:
-            # 先尝试直接升级到head
-            subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
-        except subprocess.CalledProcessError:
-            # 如果失败，则创建新的迁移并升级
-            subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'], cwd=BASE_DIR)
-            subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
+        """
+            模型迁移映射到数据库
+            """
+        subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'],
+                              cwd=BASE_DIR)
+        subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
         print(f"环境：{env}  {VERSION} 数据库表迁移完成")
 
     def __serializer_data(self):

@@ -18,9 +18,9 @@ def custom_api_docs(app: FastAPI):
         return get_swagger_ui_html(
             openapi_url=app.openapi_url,
             title=app.title + " - Swagger UI",
-            oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
-            swagger_js_url="/media/swagger_ui/swagger-ui-bundle.js",
-            swagger_css_url="/media/swagger_ui/swagger-ui.css",
+            # oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+            # swagger_js_url="/media/swagger_ui/swagger-ui-bundle.js",
+            # swagger_css_url="/media/swagger_ui/swagger-ui.css",
         )
 
     @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
@@ -32,5 +32,5 @@ def custom_api_docs(app: FastAPI):
         return get_redoc_html(
             openapi_url=app.openapi_url,
             title=app.title + " - ReDoc",
-            redoc_js_url="/media/redoc_ui/redoc.standalone.js",
+            # redoc_js_url="/media/redoc_ui/redoc.standalone.js",
         )

@@ -1,11 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-# @version        : 1.0
-# @Create Time    : 2023/6/21 10:10
-# @File           : logger.py
-# @IDE            : PyCharm
-# @desc           : 日志管理器
-
 import os
 import time
 from loguru import logger

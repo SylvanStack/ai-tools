@@ -1,4 +1,4 @@
-from ashare.ashare import *
+from data_center.ashare_api import *
 
 if __name__ == '__main__':
     # 证券代码兼容多种格式 通达信，同花顺，聚宽

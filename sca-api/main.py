@@ -82,7 +82,7 @@ def init(env: Environment = Environment.pro):
 
     :param env: 数据库环境
     """
-    print("开始初始化数据")
+    print("开始初始化数据,环境：" + env.value)
     data = InitializeData()
     asyncio.run(data.run(env))
 

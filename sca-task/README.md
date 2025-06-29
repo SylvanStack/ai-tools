@@ -1,21 +1,17 @@
-
-
-# kinit-task
+# sca-task
 
 定时任务功能：
 
 - [x] 支持添加四种定时任务：
-  - [x] 添加 date 指定日期时间执行定时任务
-  - [x] 添加 Cron 表达式定时任务
-  - [x] 添加 Interval 时间间隔定时任务
-  - [x] 支持立即执行任务功能
+    - [x] 添加 date 指定日期时间执行定时任务
+    - [x] 添加 Cron 表达式定时任务
+    - [x] 添加 Interval 时间间隔定时任务
+    - [x] 支持立即执行任务功能
 - [x] 使用 redis 消息队列功能动态添加任务
 - [x] 使用 mongodb 数据库存储持久化保存任务
 - [x] 任务表达式使用类路径表示，支持添加初始化参数：支持字符串，布尔类型，长整型，浮点型，整型
 
 - [x] 每次任务执行完成后，记录日志到 mongodb 数据中：开始/结束执行时间，耗时，任务返回值，异常信息
-
-
 
 ## 使用
 
@@ -33,9 +29,9 @@
 
    在 `application/config` 目录中
 
-   - development.py：开发环境
+    - development.py：开发环境
 
-   - production.py：生产环境
+    - production.py：生产环境
 
    ```python
    """
@@ -61,8 +57,6 @@
    python3 main.py
    ```
 
-   
-
 ## APScheduler
 
 官方文档：https://apscheduler.readthedocs.io/en/master/userguide.html
@@ -71,15 +65,11 @@ Github：https://github.com/agronholm/apscheduler
 
 PYPI：https://pypi.org/project/APScheduler/
 
-
-
 安装/更新
 
 ```
 pip install -U APScheduler -i https://mirrors.aliyun.com/pypi/simple/
 ```
-
-
 
 ### 使用
 
@@ -180,7 +170,8 @@ for job in jobs:
 
 ### 添加定时任务 add_job 方法
 
-APScheduler的`add_job`方法用于添加定时任务。除了使用Cron表达式来指定定时任务的调度规则之外，`add_job`方法还支持其他几种方法来设置定时任务的执行时间。以下是`add_job`方法常用的几种调度方式：
+APScheduler的`add_job`方法用于添加定时任务。除了使用Cron表达式来指定定时任务的调度规则之外，`add_job`
+方法还支持其他几种方法来设置定时任务的执行时间。以下是`add_job`方法常用的几种调度方式：
 
 - date：指定一个具体的日期和时间来执行任务。
 
@@ -216,7 +207,8 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
 在上述示例中，任务将在当前时间的5秒后开始执行，然后每隔10秒执行一次。
 
-这些方法提供了不同的方式来安排定时任务的执行时间。你可以根据具体需求选择适合的调度方式，并结合相关参数来设置定时任务的执行规则。无论使用哪种方法，都可以通过`add_job`方法将任务添加到调度器中，以便按照预定的时间规则执行任务。
+这些方法提供了不同的方式来安排定时任务的执行时间。你可以根据具体需求选择适合的调度方式，并结合相关参数来设置定时任务的执行规则。无论使用哪种方法，都可以通过
+`add_job`方法将任务添加到调度器中，以便按照预定的时间规则执行任务。
 
 ### cron 触发器
 
@@ -224,7 +216,8 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
 以下是关于`cron`触发器的详细解释：
 
-1. **创建触发器：**要创建一个`cron`触发器，可以使用`CronTrigger`类并指定cron表达式作为参数。cron表达式是一种字符串格式，用于指定任务触发的时间规则。它由多个字段组成，每个字段表示时间的不同部分，例如分钟、小时、日期等。示例代码如下：
+1. **创建触发器：**要创建一个`cron`触发器，可以使用`CronTrigger`
+   类并指定cron表达式作为参数。cron表达式是一种字符串格式，用于指定任务触发的时间规则。它由多个字段组成，每个字段表示时间的不同部分，例如分钟、小时、日期等。示例代码如下：
 
    ```python
    from apscheduler.triggers.cron import CronTrigger
@@ -235,7 +228,8 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
    在上述示例中，我们创建了一个每天上午10点触发的`cron`触发器。
 
-2. **添加触发器到任务：**创建触发器后，可以将它与任务相关联，以定义任务的调度规则。可以使用`add_job()`方法的`trigger`参数将触发器添加到任务中。示例代码如下：
+2. **添加触发器到任务：**创建触发器后，可以将它与任务相关联，以定义任务的调度规则。可以使用`add_job()`方法的`trigger`
+   参数将触发器添加到任务中。示例代码如下：
 
    ```python
    from apscheduler.schedulers.blocking import BlockingScheduler
@@ -251,13 +245,14 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
 3. **cron表达式：**cron表达式由多个字段组成，用空格分隔。每个字段表示时间的不同部分，具体如下：
 
-   - `分钟`：范围是0-59。
-   - `小时`：范围是0-23。
-   - `日期`：范围是1-31。
-   - `月份`：范围是1-12。
-   - `星期几`：范围是0-6，其中0表示星期日，1表示星期一，以此类推。
+    - `分钟`：范围是0-59。
+    - `小时`：范围是0-23。
+    - `日期`：范围是1-31。
+    - `月份`：范围是1-12。
+    - `星期几`：范围是0-6，其中0表示星期日，1表示星期一，以此类推。
 
-   通过在cron表达式中指定相应的字段值，可以创建各种复杂的调度规则。例如：`0 12 * * *`表示每天中午12点触发，`0 8-18 * * MON-FRI`表示工作日每小时从早上8点到下午6点之间的整点触发。
+   通过在cron表达式中指定相应的字段值，可以创建各种复杂的调度规则。例如：`0 12 * * *`表示每天中午12点触发，
+   `0 8-18 * * MON-FRI`表示工作日每小时从早上8点到下午6点之间的整点触发。
 
    ```python
    from apscheduler.triggers.cron import CronTrigger
@@ -285,7 +280,8 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
    在上述示例中，我们创建了一个每5秒触发一次的`interval`触发器。
 
-2. **添加触发器到任务：**创建触发器后，可以将它与任务相关联，以定义任务的调度规则。可以使用`add_job()`方法的`trigger`参数将触发器添加到任务中。示例代码如下：
+2. **添加触发器到任务：**创建触发器后，可以将它与任务相关联，以定义任务的调度规则。可以使用`add_job()`方法的`trigger`
+   参数将触发器添加到任务中。示例代码如下：
 
    ```python
    from apscheduler.schedulers.blocking import BlockingScheduler
@@ -301,9 +297,9 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
 3. **触发器选项：**`IntervalTrigger`类还提供了其他可选的参数，用于进一步定制触发器的行为，例如：
 
-   - `start_date`：指定触发器的开始日期和时间。
-   - `end_date`：指定触发器的结束日期和时间。
-   - `timezone`：指定触发器的时区。
+    - `start_date`：指定触发器的开始日期和时间。
+    - `end_date`：指定触发器的结束日期和时间。
+    - `timezone`：指定触发器的时区。
 
    这些选项可以通过在创建触发器时传递相应的参数来设置。
 
@@ -325,16 +321,17 @@ scheduler.add_job(job_function, 'interval', seconds=10, start_date=datetime.now(
 
 ### 事件监听器
 
-事件监听器是`APScheduler`中的一种机制，用于监视和响应调度器中的事件。当特定事件发生时，监听器将执行预定义的操作，例如记录日志、发送通知或执行自定义逻辑。下面是关于`APScheduler`事件监听器的详细解释：
+事件监听器是`APScheduler`中的一种机制，用于监视和响应调度器中的事件。当特定事件发生时，监听器将执行预定义的操作，例如记录日志、发送通知或执行自定义逻辑。下面是关于
+`APScheduler`事件监听器的详细解释：
 
 1. **事件类型：**`APScheduler`中有多个事件类型，每个事件类型对应着不同的调度器行为或状态变化。一些常见的事件类型包括：
-   - `EVENT_JOB_ADDED`：当添加新任务时触发。
-   - `EVENT_JOB_REMOVED`：当移除任务时触发。
-   - `EVENT_JOB_MODIFIED`：当修改任务时触发。
-   - `EVENT_JOB_EXECUTED`：当任务执行完成时触发。
-   - `EVENT_JOB_ERROR`：当任务执行出错时触发。
-   - `EVENT_SCHEDULER_STARTED`：当调度器启动时触发。
-   - `EVENT_SCHEDULER_SHUTDOWN`：当调度器关闭时触发。
+    - `EVENT_JOB_ADDED`：当添加新任务时触发。
+    - `EVENT_JOB_REMOVED`：当移除任务时触发。
+    - `EVENT_JOB_MODIFIED`：当修改任务时触发。
+    - `EVENT_JOB_EXECUTED`：当任务执行完成时触发。
+    - `EVENT_JOB_ERROR`：当任务执行出错时触发。
+    - `EVENT_SCHEDULER_STARTED`：当调度器启动时触发。
+    - `EVENT_SCHEDULER_SHUTDOWN`：当调度器关闭时触发。
 
 ### max_instances 最大实例
 
@@ -348,13 +345,17 @@ Execution of job "Test.main (trigger: interval[0:00:01], next run at: 2023-06-21
 
 默认情况下，`APScheduler`允许同时运行的任务实例数量是1，也就是说同一任务在执行时不会与自身的其他实例并发执行。这是为了防止任务并发执行引发的问题，例如资源冲突或意外的行为。
 
-如果你想要允许任务并发执行，可以通过调整调度器的配置来增加最大并发实例数量。在创建调度器时，可以传递`max_instances`参数来设置最大并发实例数量。示例如下：
+如果你想要允许任务并发执行，可以通过调整调度器的配置来增加最大并发实例数量。在创建调度器时，可以传递`max_instances`
+参数来设置最大并发实例数量。示例如下：
 
 ```python
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+
 def job_function():
-    # 任务逻辑
+
+
+# 任务逻辑
 
 scheduler = BlockingScheduler()
 scheduler.add_job(job_function, 'interval', seconds=1, max_instances=5)  # 设置最大并发实例为5
@@ -367,7 +368,8 @@ scheduler.start()
 
 ### 如何达到了最大实例，那么超过最大实例的其他任务会延后执行吗
 
-当调度器的任务实例数量达到最大限制时，超过最大实例数量的其他任务将会被延后执行。`APScheduler`会自动管理任务的执行队列，并按照任务的调度规则和最大实例限制进行调度。
+当调度器的任务实例数量达到最大限制时，超过最大实例数量的其他任务将会被延后执行。`APScheduler`
+会自动管理任务的执行队列，并按照任务的调度规则和最大实例限制进行调度。
 
 具体来说，当有新的任务触发时，调度器会检查当前正在运行的任务实例数量是否已经达到最大限制。如果是，则该任务的执行会被延后，直到有可用的执行实例。延后执行的任务会继续保持在调度器的执行队列中，等待下一个可用的执行时机。
 
@@ -378,8 +380,11 @@ scheduler.start()
 ```python
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+
 def job_function():
-    # 任务逻辑
+
+
+# 任务逻辑
 
 scheduler = BlockingScheduler()
 scheduler.add_job(job_function, 'interval', seconds=10, max_instances=2)  # 设置最大并发实例为2
