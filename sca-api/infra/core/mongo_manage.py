@@ -7,7 +7,7 @@ from bson.json_util import dumps
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.results import InsertOneResult, UpdateResult
-from exception import CustomException
+from .exception import CustomException
 from ..utils import status
 
 

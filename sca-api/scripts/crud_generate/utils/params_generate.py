@@ -2,7 +2,7 @@ import inspect
 import sys
 from pathlib import Path
 from typing import Type
-from core.database import Base
+from infra.core.database import Base
 from .generate_base import GenerateBase
 
 
@@ -70,7 +70,7 @@ class ParamsGenerate(GenerateBase):
 
         modules = {
             "fastapi": ['Depends'],
-            "core.dependencies": ['Paging', "QueryParams"],
+            "tt.dependencies": ['Paging', "QueryParams"],
         }
         code += self.generate_modules_code(modules)
 

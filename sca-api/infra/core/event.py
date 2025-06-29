@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from application.config.dev import REDIS_DB_URL, MONGO_DB_URL, MONGO_DB_NAME, EVENTS
-from utils.cache import Cache
+from application.settings import REDIS_DB_URL, MONGO_DB_URL, MONGO_DB_NAME, EVENTS
+from infra.utils.cache import Cache
 from redis import asyncio as aioredis
 from redis.exceptions import AuthenticationError, TimeoutError, RedisError
 from contextlib import asynccontextmanager
-from utils.tools import import_modules_async
+from infra.utils.tools import import_modules_async
 from sqlalchemy.exc import ProgrammingError
 from infra.core.logger import logger
 

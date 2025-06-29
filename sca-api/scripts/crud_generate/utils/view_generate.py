@@ -2,7 +2,7 @@ import inspect
 import sys
 from pathlib import Path
 from typing import Type
-from core.database import Base
+from infra.core.database import Base
 from .generate_base import GenerateBase
 
 
@@ -98,11 +98,11 @@ class ViewGenerate(GenerateBase):
             "sqlalchemy.ext.asyncio": ['AsyncSession'],
             "fastapi": ["APIRouter", "Depends"],
             ".": ["models", "schemas", "crud", "params"],
-            "core.dependencies": ["IdList"],
-            "domain.user.utils.current": ["AllUserAuth"],
+            "tt.dependencies": ["IdList"],
+            "apps.user.utils.current": ["AllUserAuth"],
             "utils.response": ["SuccessResponse"],
-            "domain.user.utils.validation.auth": ["Auth"],
-            "core.database": ["db_getter"],
+            "apps.user.utils.validation.auth": ["Auth"],
+            "tt.database": ["db_getter"],
         }
         return modules
 

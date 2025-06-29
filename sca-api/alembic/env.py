@@ -8,7 +8,7 @@ from alembic import context
 import os
 import sys
 
-from core.database import Base
+from infra.core.database import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -34,11 +34,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 # 导入项目中的基本映射类，与 需要迁移的 ORM 模型
-from domain.user.models import *
-from domain.system.models import *
-from domain.record.models import *
-from domain.help.models import *
-from domain.resource.models import *
+from apps.user.entity import *
+from apps.system.models import *
+from apps.record.models import *
+from apps.help.models import *
+from apps.resource.models import *
 
 # 修改配置中的参数
 target_metadata = Base.metadata

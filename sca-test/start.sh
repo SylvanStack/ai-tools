@@ -1,0 +1,1 @@
+uvicorn fast_api_test:app --reload

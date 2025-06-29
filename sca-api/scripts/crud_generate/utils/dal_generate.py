@@ -2,7 +2,7 @@ import inspect
 import sys
 from pathlib import Path
 from typing import Type
-from core.database import Base
+from infra.core.database import Base
 from .generate_base import GenerateBase
 
 
@@ -85,7 +85,7 @@ class DalGenerate(GenerateBase):
         """
         modules = {
             "sqlalchemy.ext.asyncio": ['AsyncSession'],
-            "core.crud": ["DalBase"],
+            "tt.crud": ["DalBase"],
             ".": ["models", "schemas"],
         }
         return modules

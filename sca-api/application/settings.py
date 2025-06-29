@@ -101,8 +101,8 @@ ALLOW_HEADERS = ["*"]
 全局事件配置
 """
 EVENTS = [
-    "core.event.connect_mongo" if MONGO_DB_ENABLE else None,
-    "core.event.connect_redis" if REDIS_DB_ENABLE else None,
+    "tt.event.connect_mongo" if MONGO_DB_ENABLE else None,
+    "tt.event.connect_redis" if REDIS_DB_ENABLE else None,
 ]
 
 """
@@ -129,10 +129,10 @@ IGNORE_OPERATION_FUNCTION = ["post_dicts_details"]
 中间件配置
 """
 MIDDLEWARES = [
-    "core.middleware.register_request_log_middleware" if REQUEST_LOG_RECORD else None,
-    "core.middleware.register_operation_record_middleware" if OPERATION_LOG_RECORD and MONGO_DB_ENABLE else None,
-    "core.middleware.register_demo_env_middleware" if DEMO else None,
-    "core.middleware.register_jwt_refresh_middleware"
+    "tt.middleware.register_request_log_middleware" if REQUEST_LOG_RECORD else None,
+    "tt.middleware.register_operation_record_middleware" if OPERATION_LOG_RECORD and MONGO_DB_ENABLE else None,
+    "tt.middleware.register_demo_env_middleware" if DEMO else None,
+    "tt.middleware.register_jwt_refresh_middleware"
 ]
 
 """

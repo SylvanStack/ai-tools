@@ -1,12 +1,12 @@
 from enum import Enum
 from sqlalchemy import insert
-from core.database import db_getter
-from utils.excel.excel_manage import ExcelManage
+from infra.core.database import db_getter
+from infra.utils.excel.excel_manage import ExcelManage
 from application.settings import BASE_DIR, VERSION
 import os
-from domain.auth import models as auth_models
-from domain.system import models as system_models
-from domain.help import models as help_models
+from apps.user import entity as auth_models
+from apps.system import models as system_models
+from apps.help import models as help_models
 import subprocess
 
 

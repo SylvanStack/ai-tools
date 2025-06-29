@@ -178,7 +178,7 @@ class GenerateBase:
 if __name__ == '__main__':
     _modules = {
         "sqlalchemy.ext.asyncio": ['AsyncSession'],
-        "core.crud": ["DalBase"],
+        "tt.crud": ["DalBase"],
         ".": ["models", "schemas"],
         "args": ["test", "test1"]
     }

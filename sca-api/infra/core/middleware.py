@@ -12,10 +12,10 @@ from fastapi.routing import APIRoute
 from user_agents import parse
 from application.settings import OPERATION_RECORD_METHOD, MONGO_DB_ENABLE, IGNORE_OPERATION_FUNCTION, \
     DEMO_WHITE_LIST_PATH, DEMO, DEMO_BLACK_LIST_PATH
-from utils.response import ErrorResponse
-from apps..record.crud import OperationRecordDal
+from infra.utils.response import ErrorResponse
+from apps.record.crud import OperationRecordDal
 from infra.core.database import mongo_getter
-from utils import status
+from infra.utils import status
 
 
 def write_request_log(request: Request, response: Response):
@@ -105,7 +105,7 @@ def register_operation_record_middleware(app: FastAPI):
             "status_code": response.status_code,
             "content_length": content_length,
             "create_datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "request": json.dumps(params)
+            "params": json.dumps(params)
         }
         await OperationRecordDal(mongo_getter(request)).create_data(document)
         return response

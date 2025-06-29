@@ -11,7 +11,7 @@ from typing import Type
 import inspect
 from sqlalchemy import inspect as model_inspect
 from pathlib import Path
-from core.database import Base
+from infra.core.database import Base
 from scripts.crud_generate.utils.schema import SchemaField
 from sqlalchemy.sql.schema import Column as ColumnType
 from scripts.crud_generate.utils.generate_base import GenerateBase
@@ -112,7 +112,7 @@ class SchemaGenerate(GenerateBase):
 
         modules = {
             "pydantic": ['BaseModel', "Field", "ConfigDict"],
-            "core.data_types": ['DatetimeStr'],
+            "tt.data_types": ['DatetimeStr'],
         }
         code += self.generate_modules_code(modules)
 
