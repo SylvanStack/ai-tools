@@ -1,8 +1,8 @@
 """3.12.1
 
-Revision ID: 868aa5d24085
+Revision ID: a90eb1f0112e
 Revises: 
-Create Date: 2025-06-29 23:14:21.750082
+Create Date: 2025-07-11 23:35:03.226142
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '868aa5d24085'
+revision = 'a90eb1f0112e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -110,6 +110,68 @@ def upgrade():
     )
     op.create_index(op.f('ix_auth_user_name'), 'auth_user', ['name'], unique=False)
     op.create_index(op.f('ix_auth_user_telephone'), 'auth_user', ['telephone'], unique=False)
+    op.create_table('data_stock_info',
+    sa.Column('symbol', sa.String(length=20), nullable=False, comment='股票代码'),
+    sa.Column('name', sa.String(length=50), nullable=False, comment='股票名称'),
+    sa.Column('market', sa.String(length=20), nullable=False, comment='市场类型，如上交所、深交所'),
+    sa.Column('industry', sa.String(length=50), nullable=False, comment='所属行业'),
+    sa.Column('listing_date', sa.String(length=10), nullable=False, comment='上市日期'),
+    sa.Column('total_share_capital', sa.Float(), nullable=False, comment='总股本（股）'),
+    sa.Column('circulating_share_capital', sa.Float(), nullable=False, comment='流通股本（股）'),
+    sa.Column('is_active', sa.Boolean(), nullable=False, comment='是否有效'),
+    sa.Column('id', sa.Integer(), nullable=False, comment='主键ID'),
+    sa.Column('create_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='创建时间'),
+    sa.Column('update_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='更新时间'),
+    sa.Column('delete_datetime', sa.DateTime(), nullable=True, comment='删除时间'),
+    sa.Column('is_delete', sa.Boolean(), nullable=False, comment='是否软删除'),
+    sa.PrimaryKeyConstraint('id'),
+    comment='股票基本信息表'
+    )
+    op.create_index(op.f('ix_data_stock_info_industry'), 'data_stock_info', ['industry'], unique=False)
+    op.create_index(op.f('ix_data_stock_info_market'), 'data_stock_info', ['market'], unique=False)
+    op.create_index(op.f('ix_data_stock_info_name'), 'data_stock_info', ['name'], unique=False)
+    op.create_index(op.f('ix_data_stock_info_symbol'), 'data_stock_info', ['symbol'], unique=False)
+    op.create_table('data_stock_market',
+    sa.Column('market', sa.String(length=20), nullable=False, comment='市场类型，如上交所、深交所'),
+    sa.Column('date', sa.String(length=10), nullable=False, comment='统计日期'),
+    sa.Column('total_stocks', sa.Integer(), nullable=False, comment='上市股票数'),
+    sa.Column('total_market_value', sa.Float(), nullable=False, comment='总市值（亿元）'),
+    sa.Column('circulating_market_value', sa.Float(), nullable=False, comment='流通市值（亿元）'),
+    sa.Column('total_share_capital', sa.Float(), nullable=False, comment='总股本（亿股）'),
+    sa.Column('circulating_share_capital', sa.Float(), nullable=False, comment='流通股本（亿股）'),
+    sa.Column('average_pe_ratio', sa.Float(), nullable=False, comment='平均市盈率'),
+    sa.Column('turnover_rate', sa.Float(), nullable=False, comment='换手率（%）'),
+    sa.Column('id', sa.Integer(), nullable=False, comment='主键ID'),
+    sa.Column('create_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='创建时间'),
+    sa.Column('update_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='更新时间'),
+    sa.Column('delete_datetime', sa.DateTime(), nullable=True, comment='删除时间'),
+    sa.Column('is_delete', sa.Boolean(), nullable=False, comment='是否软删除'),
+    sa.PrimaryKeyConstraint('id'),
+    comment='股票市场总貌表'
+    )
+    op.create_index(op.f('ix_data_stock_market_date'), 'data_stock_market', ['date'], unique=False)
+    op.create_index(op.f('ix_data_stock_market_market'), 'data_stock_market', ['market'], unique=False)
+    op.create_table('data_stock_minute',
+    sa.Column('symbol', sa.String(length=20), nullable=False, comment='股票代码'),
+    sa.Column('trade_time', sa.String(length=19), nullable=False, comment='交易时间，格式：YYYY-MM-DD HH:MM:SS'),
+    sa.Column('period', sa.String(length=10), nullable=False, comment='周期，如1min、5min、15min、30min、60min'),
+    sa.Column('open_price', sa.Float(), nullable=False, comment='开盘价'),
+    sa.Column('close_price', sa.Float(), nullable=False, comment='收盘价'),
+    sa.Column('high_price', sa.Float(), nullable=False, comment='最高价'),
+    sa.Column('low_price', sa.Float(), nullable=False, comment='最低价'),
+    sa.Column('volume', sa.Integer(), nullable=False, comment='成交量（手）'),
+    sa.Column('amount', sa.Float(), nullable=False, comment='成交额（元）'),
+    sa.Column('id', sa.Integer(), nullable=False, comment='主键ID'),
+    sa.Column('create_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='创建时间'),
+    sa.Column('update_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='更新时间'),
+    sa.Column('delete_datetime', sa.DateTime(), nullable=True, comment='删除时间'),
+    sa.Column('is_delete', sa.Boolean(), nullable=False, comment='是否软删除'),
+    sa.PrimaryKeyConstraint('id'),
+    comment='股票分钟数据表'
+    )
+    op.create_index(op.f('ix_data_stock_minute_period'), 'data_stock_minute', ['period'], unique=False)
+    op.create_index(op.f('ix_data_stock_minute_symbol'), 'data_stock_minute', ['symbol'], unique=False)
+    op.create_index(op.f('ix_data_stock_minute_trade_time'), 'data_stock_minute', ['trade_time'], unique=False)
     op.create_table('record_login',
     sa.Column('telephone', sa.String(length=255), nullable=False, comment='手机号'),
     sa.Column('status', sa.Boolean(), nullable=False, comment='是否登录成功'),
@@ -193,6 +255,31 @@ def upgrade():
     sa.ForeignKeyConstraint(['role_id'], ['auth_role.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['auth_user.id'], ondelete='CASCADE')
     )
+    op.create_table('data_stock_daily',
+    sa.Column('stock_id', sa.Integer(), nullable=False, comment='关联的股票ID'),
+    sa.Column('symbol', sa.String(length=20), nullable=False, comment='股票代码'),
+    sa.Column('trade_date', sa.String(length=10), nullable=False, comment='交易日期'),
+    sa.Column('open_price', sa.Float(), nullable=False, comment='开盘价'),
+    sa.Column('close_price', sa.Float(), nullable=False, comment='收盘价'),
+    sa.Column('high_price', sa.Float(), nullable=False, comment='最高价'),
+    sa.Column('low_price', sa.Float(), nullable=False, comment='最低价'),
+    sa.Column('volume', sa.Integer(), nullable=False, comment='成交量（手）'),
+    sa.Column('amount', sa.Float(), nullable=False, comment='成交额（元）'),
+    sa.Column('amplitude', sa.Float(), nullable=False, comment='振幅（%）'),
+    sa.Column('change_percent', sa.Float(), nullable=False, comment='涨跌幅（%）'),
+    sa.Column('change_amount', sa.Float(), nullable=False, comment='涨跌额'),
+    sa.Column('turnover_rate', sa.Float(), nullable=False, comment='换手率（%）'),
+    sa.Column('id', sa.Integer(), nullable=False, comment='主键ID'),
+    sa.Column('create_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='创建时间'),
+    sa.Column('update_datetime', sa.DateTime(), server_default=sa.text('now()'), nullable=False, comment='更新时间'),
+    sa.Column('delete_datetime', sa.DateTime(), nullable=True, comment='删除时间'),
+    sa.Column('is_delete', sa.Boolean(), nullable=False, comment='是否软删除'),
+    sa.ForeignKeyConstraint(['stock_id'], ['data_stock_info.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    comment='股票日线数据表'
+    )
+    op.create_index(op.f('ix_data_stock_daily_symbol'), 'data_stock_daily', ['symbol'], unique=False)
+    op.create_index(op.f('ix_data_stock_daily_trade_date'), 'data_stock_daily', ['trade_date'], unique=False)
     op.create_table('help_issue_category',
     sa.Column('name', sa.String(length=50), nullable=False, comment='类别名称'),
     sa.Column('platform', sa.String(length=8), nullable=False, comment='展示平台'),
@@ -309,6 +396,9 @@ def downgrade():
     op.drop_index(op.f('ix_help_issue_category_platform'), table_name='help_issue_category')
     op.drop_index(op.f('ix_help_issue_category_name'), table_name='help_issue_category')
     op.drop_table('help_issue_category')
+    op.drop_index(op.f('ix_data_stock_daily_trade_date'), table_name='data_stock_daily')
+    op.drop_index(op.f('ix_data_stock_daily_symbol'), table_name='data_stock_daily')
+    op.drop_table('data_stock_daily')
     op.drop_table('auth_user_roles')
     op.drop_table('auth_user_depts')
     op.drop_table('auth_role_menus')
@@ -321,6 +411,18 @@ def downgrade():
     op.drop_table('system_dict_type')
     op.drop_index(op.f('ix_record_login_telephone'), table_name='record_login')
     op.drop_table('record_login')
+    op.drop_index(op.f('ix_data_stock_minute_trade_time'), table_name='data_stock_minute')
+    op.drop_index(op.f('ix_data_stock_minute_symbol'), table_name='data_stock_minute')
+    op.drop_index(op.f('ix_data_stock_minute_period'), table_name='data_stock_minute')
+    op.drop_table('data_stock_minute')
+    op.drop_index(op.f('ix_data_stock_market_market'), table_name='data_stock_market')
+    op.drop_index(op.f('ix_data_stock_market_date'), table_name='data_stock_market')
+    op.drop_table('data_stock_market')
+    op.drop_index(op.f('ix_data_stock_info_symbol'), table_name='data_stock_info')
+    op.drop_index(op.f('ix_data_stock_info_name'), table_name='data_stock_info')
+    op.drop_index(op.f('ix_data_stock_info_market'), table_name='data_stock_info')
+    op.drop_index(op.f('ix_data_stock_info_industry'), table_name='data_stock_info')
+    op.drop_table('data_stock_info')
     op.drop_index(op.f('ix_auth_user_telephone'), table_name='auth_user')
     op.drop_index(op.f('ix_auth_user_name'), table_name='auth_user')
     op.drop_table('auth_user')

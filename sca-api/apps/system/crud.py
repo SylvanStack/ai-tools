@@ -22,10 +22,7 @@ from fastapi import Request
 class DictTypeDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(DictTypeDal, self).__init__()
-        self.db = db
-        self.model = models.DictType
-        self.schema = schemas.DictTypeSimpleOut
+        super(DictTypeDal, self).__init__(db=db, model=models.DictType, schema=schemas.DictTypeSimpleOut)
 
     async def get_dicts_details(self, dict_types: list[str]) -> dict:
         """
@@ -57,19 +54,13 @@ class DictTypeDal(DalBase):
 class DictDetailsDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(DictDetailsDal, self).__init__()
-        self.db = db
-        self.model = models.DictDetails
-        self.schema = schemas.DictDetailsSimpleOut
+        super(DictDetailsDal, self).__init__(db=db, model=models.DictDetails, schema=schemas.DictDetailsSimpleOut)
 
 
 class SettingsDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(SettingsDal, self).__init__()
-        self.db = db
-        self.model = models.SystemSettings
-        self.schema = schemas.SettingsSimpleOut
+        super(SettingsDal, self).__init__(db=db, model=models.SystemSettings, schema=schemas.SettingsSimpleOut)
 
     async def get_tab_values(self, tab_id: int) -> dict:
         """

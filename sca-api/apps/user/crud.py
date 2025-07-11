@@ -38,10 +38,7 @@ class UserDal(DalBase):
     ]
 
     def __init__(self, db: AsyncSession):
-        super(UserDal, self).__init__()
-        self.db = db
-        self.model = models.User
-        self.schema = schemas.UserSimpleOut
+        super(UserDal, self).__init__(db=db, model=models.User, schema=schemas.UserSimpleOut)
 
     async def recursion_get_dept_ids(
             self,
@@ -430,10 +427,7 @@ class UserDal(DalBase):
 class RoleDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(RoleDal, self).__init__()
-        self.db = db
-        self.model = models.Role
-        self.schema = schemas.RoleSimpleOut
+        super(RoleDal, self).__init__(db=db, model=models.Role, schema=schemas.RoleSimpleOut)
 
     async def create_data(
             self,
@@ -532,10 +526,7 @@ class RoleDal(DalBase):
 class MenuDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(MenuDal, self).__init__()
-        self.db = db
-        self.model = models.Menu
-        self.schema = schemas.MenuSimpleOut
+        super(MenuDal, self).__init__(db=db, model=models.Menu, schema=schemas.MenuSimpleOut)
 
     async def get_tree_list(self, mode: int) -> list:
         """
@@ -682,10 +673,7 @@ class MenuDal(DalBase):
 class DeptDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(DeptDal, self).__init__()
-        self.db = db
-        self.model = models.Dept
-        self.schema = schemas.DeptSimpleOut
+        super(DeptDal, self).__init__(db=db, model=models.Dept, schema=schemas.DeptSimpleOut)
 
     async def get_tree_list(self, mode: int) -> list:
         """
@@ -759,9 +747,7 @@ class DeptDal(DalBase):
 class TestDal(DalBase):
 
     def __init__(self, db: AsyncSession):
-        super(TestDal, self).__init__()
-        self.db = db
-        self.model = models.User
+        super(TestDal, self).__init__(db=db, model=models.User)
 
     async def test_session_cache(self):
         """
