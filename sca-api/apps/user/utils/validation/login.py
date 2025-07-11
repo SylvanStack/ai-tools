@@ -3,8 +3,8 @@ from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 from application.settings import DEFAULT_AUTH_ERROR_MAX_NUMBER, DEMO, REDIS_DB_ENABLE
 from apps.user import crud, schemas
-from infra.core.database import redis_getter
-from infra.core.validator import vali_telephone
+from infra.redis.redis_db import redis_getter
+from infra.utils.validator_utils import vali_telephone
 from infra.utils.count import Count
 
 

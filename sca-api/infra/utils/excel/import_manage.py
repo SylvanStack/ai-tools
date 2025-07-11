@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import UploadFile
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from infra.utils import status
 from .excel_manage import ExcelManage
 from infra.utils.file.file_manage import FileManage

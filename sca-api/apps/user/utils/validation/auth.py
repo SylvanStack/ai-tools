@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from application import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from apps.user.models import User
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from infra.utils import status
 from datetime import timedelta, datetime
 from apps.user.crud import UserDal

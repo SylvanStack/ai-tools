@@ -7,7 +7,7 @@ from redis.exceptions import AuthenticationError, TimeoutError, RedisError
 from contextlib import asynccontextmanager
 from infra.utils.tools import import_modules_async
 from sqlalchemy.exc import ProgrammingError
-from infra.core.logger import logger
+from infra.logger.logger import logger
 
 
 @asynccontextmanager

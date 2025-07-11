@@ -1,5 +1,5 @@
-from infra.db.db_base import BaseModel
-from infra.db.db_base import Base
+from infra.db.base_model import BaseModel
+from infra.db.base_model import Base
 from sqlalchemy import ForeignKey, Column, Table, Integer
 
 auth_user_roles = Table(

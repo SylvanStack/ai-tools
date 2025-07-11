@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from fastapi import Request
 from application import settings
 import jwt
-from infra.core.database import redis_getter
+from infra.redis.redis_db import redis_getter
 from infra.utils.sms.code import CodeSMS
 from .validation import LoginValidation, LoginForm, LoginResult
 from apps.user import models

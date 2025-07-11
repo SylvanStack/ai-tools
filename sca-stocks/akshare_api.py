@@ -83,15 +83,15 @@ def get_stock_history(symbol, period="daily", start_date=None, end_date=None, ad
 
 # 测试代码
 if __name__ == "__main__":
-    # # 测试获取深交所股票总貌
-    # szse_summary_df = get_szse_summary(date="20230619")
-    # print("深交所股票总貌数据:")
-    # print(szse_summary_df)
-    #
+    # 测试获取深交所股票总貌
+    szse_summary_df = get_szse_summary(date="20230619")
+    print("深交所股票总貌数据:")
+    print(szse_summary_df)
+
     # # 测试获取上交所股票总貌
-    # sse_summary_df = get_sse_summary()
-    # print("\n上交所股票总貌数据:")
-    # print(sse_summary_df)
+    sse_summary_df = get_sse_summary()
+    print("\n上交所股票总貌数据:")
+    print(sse_summary_df)
     
     # 测试获取沪深京A股列表
     stock_list_df = get_stock_list()
@@ -99,6 +99,6 @@ if __name__ == "__main__":
     print(stock_list_df.head())
     
     # # 测试获取个股历史行情
-    # stock_history_df = get_stock_history(symbol="000001", start_date="20230101", end_date="20230619")
-    # print("\n平安银行历史行情数据:")
-    # print(stock_history_df.head())
+    stock_history_df = get_stock_history(symbol="000001", start_date="20230101", end_date="20230619")
+    print("\n平安银行历史行情数据:")
+    print(stock_history_df.head())

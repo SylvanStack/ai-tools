@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from apps.user.models import User
-from infra.db.db_base import BaseModel
+from infra.db.base_model import BaseModel
 from sqlalchemy import String, Boolean, Integer, ForeignKey, Text
 
 
@@ -14,11 +14,7 @@ class IssueCategory(BaseModel):
 
     issues: Mapped[list["Issue"]] = relationship(back_populates='category')
 
-    create_user_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("auth_user.id", ondelete='RESTRICT'),
-        comment="创建人"
-    )
+    create_user_id: Mapped[int] = mapped_column(Integer,ForeignKey("auth_user.id", ondelete='RESTRICT'),comment="创建人")
     create_user: Mapped[User] = relationship(foreign_keys=create_user_id)
 
 

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from apps.user.models import User
-from infra.db.db_base import BaseModel
+from infra.db.base_model import BaseModel
 from sqlalchemy import String, ForeignKey, Integer
 
 

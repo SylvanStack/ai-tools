@@ -1,7 +1,7 @@
 
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from infra.core.crud import DalBase
+from infra.db.crud import DalBase
 from . import models, schemas
 
 

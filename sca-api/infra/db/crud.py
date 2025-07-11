@@ -10,19 +10,207 @@ from sqlalchemy import func, delete, update, BinaryExpression, ScalarResult, sel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.strategy_options import _AbstractLoad
 from starlette import status
-from .exception import CustomException
+from ..exception.exception import CustomException
 from sqlalchemy.sql.selectable import Select as SelectType
 from typing import Any, Union
 
 
-class DalBase:
+class QueryBuilder:
+    """
+    查询构建器，负责构建SQL查询
+    """
     # 倒叙
     ORDER_FIELD = ["desc", "descending"]
 
+    def __init__(self, model: Any):
+        self.model = model
+
+    def build_base_query(self) -> SelectType:
+        """
+        构建基础查询
+        :return: 基础查询对象
+        """
+        return select(self.model).where(self.model.is_delete == false())
+
+    def add_relation(
+            self,
+            v_start_sql: SelectType,
+            v_select_from: list[Any] = None,
+            v_join: list[Any] = None,
+            v_outer_join: list[Any] = None,
+            v_options: list[_AbstractLoad] = None,
+    ) -> SelectType:
+        """
+        关系查询，关系加载
+        :param v_start_sql: 初始 sql
+        :param v_select_from: 用于指定查询从哪个表开始，通常与 .join() 等方法一起使用。
+        :param v_join: 创建内连接（INNER JOIN）操作，返回两个表中满足连接条件的交集。
+        :param v_outer_join: 用于创建外连接（OUTER JOIN）操作，返回两个表中满足连接条件的并集，包括未匹配的行，并用 NULL 值填充。
+        :param v_options: 用于为查询添加附加选项，如预加载、延迟加载等。
+        """
+        if v_select_from:
+            v_start_sql = v_start_sql.select_from(*v_select_from)
+
+        if v_join:
+            for relation in v_join:
+                table = relation[0]
+                if isinstance(table, str):
+                    table = getattr(self.model, table)
+                if len(relation) == 2:
+                    v_start_sql = v_start_sql.join(table, relation[1])
+                else:
+                    v_start_sql = v_start_sql.join(table)
+
+        if v_outer_join:
+            for relation in v_outer_join:
+                table = relation[0]
+                if isinstance(table, str):
+                    table = getattr(self.model, table)
+                if len(relation) == 2:
+                    v_start_sql = v_start_sql.outerjoin(table, relation[1])
+                else:
+                    v_start_sql = v_start_sql.outerjoin(table)
+
+        if v_options:
+            v_start_sql = v_start_sql.options(*v_options)
+
+        return v_start_sql
+
+    def add_filter_condition(self, sql: SelectType, **kwargs) -> SelectType:
+        """
+        添加过滤条件
+        :param sql:
+        :param kwargs: 关键词参数
+        """
+        conditions = self._dict_filter(**kwargs)
+        if conditions:
+            sql = sql.where(*conditions)
+        return sql
+
+    def _dict_filter(self, **kwargs) -> list[BinaryExpression]:
+        """
+        字典过滤
+        :param kwargs: 过滤条件
+        """
+        conditions = []
+        for field, value in kwargs.items():
+            if value is not None and value != "":
+                attr = getattr(self.model, field)
+                if isinstance(value, tuple):
+                    if len(value) == 1:
+                        if value[0] == "None":
+                            conditions.append(attr.is_(None))
+                        elif value[0] == "not None":
+                            conditions.append(attr.isnot(None))
+                        else:
+                            raise CustomException("SQL查询语法错误")
+                    elif len(value) == 2 and value[1] not in [None, [], ""]:
+                        if value[0] == "date":
+                            # 根据日期查询， 关键函数是：func.time_format和func.date_format
+                            conditions.append(func.date_format(attr, "%Y-%m-%d") == value[1])
+                        elif value[0] == "like":
+                            conditions.append(attr.like(f"%{value[1]}%"))
+                        elif value[0] == "in":
+                            conditions.append(attr.in_(value[1]))
+                        elif value[0] == "between" and len(value[1]) == 2:
+                            conditions.append(attr.between(value[1][0], value[1][1]))
+                        elif value[0] == "month":
+                            conditions.append(func.date_format(attr, "%Y-%m") == value[1])
+                        elif value[0] == "!=":
+                            conditions.append(attr != value[1])
+                        elif value[0] == ">":
+                            conditions.append(attr > value[1])
+                        elif value[0] == ">=":
+                            conditions.append(attr >= value[1])
+                        elif value[0] == "<=":
+                            conditions.append(attr <= value[1])
+                        else:
+                            raise CustomException("SQL查询语法错误")
+                else:
+                    conditions.append(attr == value)
+        return conditions
+
+    def add_order(self, sql: SelectType, v_order: str = None, v_order_field: str = None) -> SelectType:
+        """
+        添加排序
+        :param sql: SQL查询
+        :param v_order: 排序方式
+        :param v_order_field: 排序字段
+        :return: 更新后的查询
+        """
+        if v_order_field and (v_order in self.ORDER_FIELD):
+            sql = sql.order_by(getattr(self.model, v_order_field).desc(), self.model.id.desc())
+        elif v_order_field:
+            sql = sql.order_by(getattr(self.model, v_order_field), self.model.id)
+        elif v_order in self.ORDER_FIELD:
+            sql = sql.order_by(self.model.id.desc())
+        return sql
+
+
+class DataSerializer:
+    """
+    数据序列化器，负责数据的序列化和反序列化
+    """
+    def __init__(self, schema: Any = None):
+        self.schema = schema
+
+    def serialize(self, obj: Any, schema: Any = None) -> dict:
+        """
+        序列化对象
+        :param obj: 对象
+        :param schema: 序列化模式
+        :return: 序列化后的字典
+        """
+        if schema:
+            return schema.model_validate(obj).model_dump()
+        elif self.schema:
+            return self.schema.model_validate(obj).model_dump()
+        return jsonable_encoder(obj)
+
+
+class SessionOperator:
+    """
+    会话操作器，负责操作数据库会话中的对象
+    """
+    def __init__(self, db: AsyncSession):
+        """
+        初始化会话操作器
+        :param db: 数据库会话
+        """
+        self.db = db
+
+    async def flush(self, obj: Any = None) -> Any:
+        """
+        刷新对象到数据库
+        :param obj: 要刷新的对象
+        :return: 刷新后的对象
+        """
+        if obj:
+            self.db.add(obj)
+        await self.db.flush()
+        if obj:
+            # 使用 get_data 或者 get_datas 获取到实例后如果更新了实例，并需要序列化实例，那么需要执行 refresh 刷新才能正常序列化
+            await self.db.refresh(obj)
+        return obj
+
+    def expire_all(self) -> None:
+        """
+        使会话中的所有对象过期，强制从数据库重新加载
+        """
+        self.db.expire_all()
+
+
+class DalBase:
+    """
+    数据访问层基类
+    """
     def __init__(self, db: AsyncSession = None, model: Any = None, schema: Any = None):
         self.db = db
         self.model = model
         self.schema = schema
+        self.query_builder = QueryBuilder(model) if model else None
+        self.serializer = DataSerializer(schema)
+        self.session_operator = SessionOperator(db) if db else None
 
     async def get_data(
             self,
@@ -58,10 +246,10 @@ class DalBase:
         :return: 默认返回 ORM 对象，如果存在 v_schema 则会返回 v_schema 结果
         """
         if v_expire_all:
-            self.db.expire_all()
+            self.session_operator.expire_all()
 
         if not isinstance(v_start_sql, SelectType):
-            v_start_sql = select(self.model).where(self.model.is_delete == false())
+            v_start_sql = self.query_builder.build_base_query()
 
         if data_id is not None:
             v_start_sql = v_start_sql.where(self.model.id == data_id)
@@ -88,7 +276,7 @@ class DalBase:
             return None
 
         if data and v_schema:
-            return v_schema.model_validate(data).model_dump()
+            return self.serializer.serialize(data, v_schema)
 
         if data:
             return data
@@ -137,7 +325,7 @@ class DalBase:
         :return: 返回值优先级：v_return_scalars > v_return_objs > v_schema
         """
         if v_expire_all:
-            self.db.expire_all()
+            self.session_operator.expire_all()
 
         sql: SelectType = await self.filter_core(
             v_start_sql=v_start_sql,
@@ -233,7 +421,7 @@ class DalBase:
             obj = self.model(**data)
         else:
             obj = self.model(**data.model_dump())
-        await self.flush(obj)
+        await self.session_operator.flush(obj)
         return await self.out_dict(obj, v_options, v_return_obj, v_schema)
 
     async def create_datas(self, datas: list[dict]) -> None:
@@ -266,7 +454,7 @@ class DalBase:
         obj_dict = jsonable_encoder(data)
         for key, value in obj_dict.items():
             setattr(obj, key, value)
-        await self.flush(obj)
+        await self.session_operator.flush(obj)
         return await self.out_dict(obj, None, v_return_obj, v_schema)
 
     async def delete_datas(self, ids: list[int], v_soft: bool = False, **kwargs) -> None:
@@ -286,7 +474,7 @@ class DalBase:
             )
         else:
             await self.db.execute(delete(self.model).where(self.model.id.in_(ids)))
-        await self.flush()
+        await self.session_operator.flush()
 
     async def flush(self, obj: Any = None) -> Any:
         """
@@ -294,13 +482,7 @@ class DalBase:
         :param obj:
         :return:
         """
-        if obj:
-            self.db.add(obj)
-        await self.db.flush()
-        if obj:
-            # 使用 get_data 或者 get_datas 获取到实例后如果更新了实例，并需要序列化实例，那么需要执行 refresh 刷新才能正常序列化
-            await self.db.refresh(obj)
-        return obj
+        return await self.session_operator.flush(obj)
 
     async def out_dict(
             self,
@@ -321,9 +503,7 @@ class DalBase:
             obj = await self.get_data(obj.id, v_options=v_options)
         if v_return_obj:
             return obj
-        if v_schema:
-            return v_schema.model_validate(obj).model_dump()
-        return self.schema.model_validate(obj).model_dump()
+        return self.serializer.serialize(obj, v_schema)
 
     async def filter_core(
             self,
@@ -352,27 +532,25 @@ class DalBase:
         :return: 返回过滤后的总数居 或 sql
         """
         if not isinstance(v_start_sql, SelectType):
-            v_start_sql = select(self.model).where(self.model.is_delete == false())
+            v_start_sql = self.query_builder.build_base_query()
 
-        sql = self.add_relation(
-            v_start_sql=v_start_sql,
-            v_select_from=v_select_from,
-            v_join=v_join,
-            v_outer_join=v_outer_join,
-            v_options=v_options
+        # 添加关系查询
+        sql = self.query_builder.add_relation(
+            v_start_sql,
+            v_select_from,
+            v_join,
+            v_outer_join,
+            v_options
         )
 
+        # 添加过滤条件
         if v_where:
             sql = sql.where(*v_where)
 
-        sql = self.add_filter_condition(sql, **kwargs)
+        sql = self.query_builder.add_filter_condition(sql, **kwargs)
 
-        if v_order_field and (v_order in self.ORDER_FIELD):
-            sql = sql.order_by(getattr(self.model, v_order_field).desc(), self.model.id.desc())
-        elif v_order_field:
-            sql = sql.order_by(getattr(self.model, v_order_field), self.model.id)
-        elif v_order in self.ORDER_FIELD:
-            sql = sql.order_by(self.model.id.desc())
+        # 添加排序
+        sql = self.query_builder.add_order(sql, v_order, v_order_field)
 
         if v_return_sql:
             return sql
@@ -380,102 +558,3 @@ class DalBase:
         queryset = await self.db.scalars(sql)
 
         return queryset
-
-    def add_relation(
-            self,
-            v_start_sql: SelectType,
-            v_select_from: list[Any] = None,
-            v_join: list[Any] = None,
-            v_outer_join: list[Any] = None,
-            v_options: list[_AbstractLoad] = None,
-    ) -> SelectType:
-        """
-        关系查询，关系加载
-        :param v_start_sql: 初始 sql
-        :param v_select_from: 用于指定查询从哪个表开始，通常与 .join() 等方法一起使用。
-        :param v_join: 创建内连接（INNER JOIN）操作，返回两个表中满足连接条件的交集。
-        :param v_outer_join: 用于创建外连接（OUTER JOIN）操作，返回两个表中满足连接条件的并集，包括未匹配的行，并用 NULL 值填充。
-        :param v_options: 用于为查询添加附加选项，如预加载、延迟加载等。
-        """
-        if v_select_from:
-            v_start_sql = v_start_sql.select_from(*v_select_from)
-
-        if v_join:
-            for relation in v_join:
-                table = relation[0]
-                if isinstance(table, str):
-                    table = getattr(self.model, table)
-                if len(relation) == 2:
-                    v_start_sql = v_start_sql.join(table, relation[1])
-                else:
-                    v_start_sql = v_start_sql.join(table)
-
-        if v_outer_join:
-            for relation in v_outer_join:
-                table = relation[0]
-                if isinstance(table, str):
-                    table = getattr(self.model, table)
-                if len(relation) == 2:
-                    v_start_sql = v_start_sql.outerjoin(table, relation[1])
-                else:
-                    v_start_sql = v_start_sql.outerjoin(table)
-
-        if v_options:
-            v_start_sql = v_start_sql.options(*v_options)
-
-        return v_start_sql
-
-    def add_filter_condition(self, sql: SelectType, **kwargs) -> SelectType:
-        """
-        添加过滤条件
-        :param sql:
-        :param kwargs: 关键词参数
-        """
-        conditions = self.__dict_filter(**kwargs)
-        if conditions:
-            sql = sql.where(*conditions)
-        return sql
-
-    def __dict_filter(self, **kwargs) -> list[BinaryExpression]:
-        """
-        字典过滤
-        :param model:
-        :param kwargs:
-        """
-        conditions = []
-        for field, value in kwargs.items():
-            if value is not None and value != "":
-                attr = getattr(self.model, field)
-                if isinstance(value, tuple):
-                    if len(value) == 1:
-                        if value[0] == "None":
-                            conditions.append(attr.is_(None))
-                        elif value[0] == "not None":
-                            conditions.append(attr.isnot(None))
-                        else:
-                            raise CustomException("SQL查询语法错误")
-                    elif len(value) == 2 and value[1] not in [None, [], ""]:
-                        if value[0] == "date":
-                            # 根据日期查询， 关键函数是：func.time_format和func.date_format
-                            conditions.append(func.date_format(attr, "%Y-%m-%d") == value[1])
-                        elif value[0] == "like":
-                            conditions.append(attr.like(f"%{value[1]}%"))
-                        elif value[0] == "in":
-                            conditions.append(attr.in_(value[1]))
-                        elif value[0] == "between" and len(value[1]) == 2:
-                            conditions.append(attr.between(value[1][0], value[1][1]))
-                        elif value[0] == "month":
-                            conditions.append(func.date_format(attr, "%Y-%m") == value[1])
-                        elif value[0] == "!=":
-                            conditions.append(attr != value[1])
-                        elif value[0] == ">":
-                            conditions.append(attr > value[1])
-                        elif value[0] == ">=":
-                            conditions.append(attr >= value[1])
-                        elif value[0] == "<=":
-                            conditions.append(attr <= value[1])
-                        else:
-                            raise CustomException("SQL查询语法错误")
-                else:
-                    conditions.append(attr == value)
-        return conditions

@@ -4,7 +4,7 @@ from pathlib import Path
 from aiopathlib import AsyncPath
 from fastapi import UploadFile
 from application.settings import TEMP_DIR, STATIC_ROOT
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from infra.utils import status
 from infra.utils.tools import generate_string
 

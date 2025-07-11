@@ -5,7 +5,7 @@ import datetime
 from typing import Annotated, Any
 from bson import ObjectId
 from pydantic import AfterValidator, PlainSerializer, WithJsonSchema
-from .validator import *
+from infra.utils.validator_utils import *
 
 
 def datetime_str_vali(value: str | datetime.datetime | int | float | dict):

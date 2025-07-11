@@ -4,7 +4,7 @@ import zipfile
 from application.settings import STATIC_ROOT, BASE_DIR, STATIC_URL
 from fastapi import UploadFile
 import sys
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from infra.utils.file.file_base import FileBase
 from aiopathlib import AsyncPath
 import aioshutil

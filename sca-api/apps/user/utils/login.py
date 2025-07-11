@@ -17,8 +17,9 @@ from redis.asyncio import Redis
 from fastapi import APIRouter, Depends, Request, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from infra.core.database import db_getter, redis_getter
-from infra.core.exception import CustomException
+from infra.db.database import db_getter
+from infra.redis.redis_db import  redis_getter
+from infra.exception.exception import CustomException
 from infra.utils import status
 from infra.utils.response import SuccessResponse, ErrorResponse
 from application import settings

@@ -1,6 +1,6 @@
 import requests
 from redis.asyncio import Redis
-from infra.core.logger import logger
+from infra.logger.logger import logger
 
 
 class WxAccessToken:

@@ -6,7 +6,7 @@ from application.settings import LOGIN_LOG_RECORD
 from apps.user.utils.validation import LoginForm, WXLoginForm
 from infra.utils.ip_manage import IPManage
 from sqlalchemy.ext.asyncio import AsyncSession
-from infra.db.db_base import BaseModel
+from infra.db.base_model import BaseModel
 from sqlalchemy import String, Boolean, Text
 from fastapi import Request
 from starlette.requests import Request as StarletteRequest

@@ -2,7 +2,7 @@ import inspect
 import sys
 from pathlib import Path
 from typing import Type
-from infra.core.database import Base
+from infra.db.database import Base
 from .generate_base import GenerateBase
 
 

@@ -10,8 +10,8 @@ from starlette.middleware.cors import CORSMiddleware
 from application import settings
 from application import urls
 from starlette.staticfiles import StaticFiles  # 依赖安装：pip install aiofiles
-from infra.core.docs import custom_api_docs
-from infra.core.exception import register_exception
+from infra.swagger.docs import custom_api_docs
+from infra.exception.exception import register_exception
 import typer
 from scripts.initialize.initialize import InitializeData, Environment
 import asyncio
@@ -30,8 +30,7 @@ def create_app():
     redoc_url： 配置 Redoc 文档的路由地址，如果禁用则为None，默认为 /redoc
     openapi_url：配置接口文件json数据文件路由地址，如果禁用则为None，默认为/openapi.json
     """
-    app = FastAPI(title="sca-api", description="", version=settings.VERSION,
-                  lifespan=lifespan, docs_url=None, redoc_url=None)
+    app = FastAPI(title="sca-api", description="脚手架API", version=settings.VERSION, lifespan=lifespan, docs_url=None, redoc_url=None)
     import_modules(settings.MIDDLEWARES, "中间件", app=app)
     # 全局异常捕捉处理
     register_exception(app)
@@ -58,8 +57,7 @@ def create_app():
 @shell_app.command()
 def run(
         host: str = typer.Option(default='127.0.0.1', help='监听主机IP，默认开放给本网络所有主机'),
-        port: int = typer.Option(default=9000, help='监听端口')
-):
+        port: int = typer.Option(default=9000, help='监听端口')):
     """
     启动项目
 

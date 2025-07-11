@@ -1,7 +1,7 @@
 from redis.asyncio import Redis
 from fastapi import APIRouter, Depends, Body, UploadFile, Request
 from sqlalchemy.orm import joinedload
-from infra.core.database import redis_getter
+from infra.redis.redis_db import redis_getter
 from infra.utils.response import SuccessResponse, ErrorResponse
 from . import schemas, crud, models
 from infra.core.dependencies import IdList

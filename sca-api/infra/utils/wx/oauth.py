@@ -1,5 +1,5 @@
 import requests
-from infra.core.logger import logger
+from infra.logger.logger import logger
 from infra.utils.cache import Cache
 from infra.utils.wx.wx_access_token import WxAccessToken
 from redis.asyncio import Redis

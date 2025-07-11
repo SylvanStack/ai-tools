@@ -4,12 +4,12 @@ from fastapi import UploadFile
 from sqlalchemy.exc import StatementError
 from sqlalchemy.orm import joinedload, aliased
 from sqlalchemy.orm.strategy_options import _AbstractLoad, contains_eager
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, false, and_
-from infra.core.crud import DalBase
+from infra.db.crud import DalBase
 from sqlalchemy.ext.asyncio import AsyncSession
-from infra.core.validator import vali_telephone
+from infra.utils.validator_utils import vali_telephone
 from infra.utils.file.aliyun_oss import AliyunOSS, BucketConf
 from infra.utils.excel.import_manage import ImportManage, FieldType
 from infra.utils.excel.write_xlsx import WriteXlsx

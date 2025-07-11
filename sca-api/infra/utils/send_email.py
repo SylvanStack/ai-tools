@@ -8,7 +8,7 @@ from email.mime.application import MIMEApplication
 from typing import List
 from redis.asyncio import Redis
 
-from ..core.exception import CustomException
+from infra.exception.exception import CustomException
 from ..utils.cache import Cache
 
 

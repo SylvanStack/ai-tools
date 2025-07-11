@@ -4,7 +4,7 @@ from typing import Type
 from application.settings import BASE_DIR
 import inspect
 from pathlib import Path
-from infra.core.database import Base
+from infra.db.database import Base
 from scripts.crud_generate.utils.generate_base import GenerateBase
 from scripts.crud_generate.utils.schema_generate import SchemaGenerate
 from scripts.crud_generate.utils.params_generate import ParamsGenerate

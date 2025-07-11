@@ -2,8 +2,8 @@ import datetime
 import warnings
 from redis.asyncio import Redis
 from .aliyun import AliyunSMS
-from infra.core.logger import logger
-from infra.core.exception import CustomException
+from infra.logger.logger import logger
+from infra.exception.exception import CustomException
 
 
 class CodeSMS(AliyunSMS):

@@ -10,7 +10,9 @@ from fastapi import APIRouter, Depends, Body, UploadFile, Form, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 from application.settings import ALIYUN_OSS
-from infra.core.database import db_getter, redis_getter, mongo_getter
+from infra.db.database import db_getter
+from infra.redis.redis_db import redis_getter
+from infra.mongo.mongo_db import mongo_getter
 from infra.utils.file.aliyun_oss import AliyunOSS, BucketConf
 from infra.utils.file.file_manage import FileManage
 from infra.utils.response import SuccessResponse, ErrorResponse

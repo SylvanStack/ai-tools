@@ -11,7 +11,7 @@ from aiohttp import TCPConnector
 
 from application.config.dev import IP_PARSE_TOKEN, IP_PARSE_ENABLE
 import aiohttp
-from ..core.logger import logger
+from infra.logger.logger import logger
 from pydantic import BaseModel
 
 

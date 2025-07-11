@@ -4,7 +4,7 @@ import re
 import string
 from typing import List, Union
 import importlib
-from ..core.logger import logger
+from infra.logger.logger import logger
 
 
 def test_password(password: str) -> Union[str, bool]:

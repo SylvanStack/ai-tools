@@ -6,7 +6,7 @@ import datetime
 import json
 import time
 from fastapi import Request, Response
-from logger import logger
+from infra.logger.logger import logger
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from user_agents import parse
@@ -14,7 +14,7 @@ from application.settings import OPERATION_RECORD_METHOD, MONGO_DB_ENABLE, IGNOR
     DEMO_WHITE_LIST_PATH, DEMO, DEMO_BLACK_LIST_PATH
 from infra.utils.response import ErrorResponse
 from apps.record.crud import OperationRecordDal
-from infra.core.database import mongo_getter
+from infra.mongo.mongo_db import mongo_getter
 from infra.utils import status
 
 

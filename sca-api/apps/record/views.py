@@ -12,7 +12,7 @@ from . import crud
 from apps.user.utils.current import AllUserAuth
 from apps.user.utils.validation.auth import Auth
 from .params import LoginParams, OperationParams, SMSParams
-from infra.core.database import mongo_getter
+from infra.mongo.mongo_db import mongo_getter
 
 app = APIRouter()
 

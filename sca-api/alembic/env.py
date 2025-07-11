@@ -9,7 +9,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
-from infra.core.database import Base
+from infra.db.base_model import Base
 
 # 加载环境变量
 load_dotenv()
@@ -44,19 +44,44 @@ config.set_section_option(section, "sqlalchemy.url",
     f"{os.getenv('DB_HOST', '127.0.0.1')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'sca-api')}")
 
 # 导入项目中的基本映射类，与 需要迁移的 ORM 模型
-from apps.user.models import *
-from apps.system.models import *
-from apps.record.models import *
-from apps.help.models import *
-from apps.resource.models import *
+# 导入所有模块的模型
+# data_center 模块
+from apps.data_center.models.stock import StockMarket, StockInfo, StockDaily, StockMinute
+# record 模块
+from apps.record.models.login import LoginRecord
+from apps.record.models.sms import SMSSendRecord
+# user 模块
+from apps.user.models.user import User
+from apps.user.models.role import Role
+from apps.user.models.menu import Menu
+from apps.user.models.dept import Dept
+from apps.user.models.m2m import auth_user_roles, auth_user_depts, auth_role_depts
+# system 模块
+from apps.system.models.settings import SystemSettings, SystemSettingsTab
+from apps.system.models.dict import DictType, DictDetails
+# resource 模块
+from apps.resource.models.images import Images
+# help 模块
+from apps.help.models.issue import Issue, IssueCategory
 
 # 修改配置中的参数
 target_metadata = Base.metadata
 
+# 检查是否需要跳过删除表操作
+SKIP_DROP_TABLES = os.environ.get('ALEMBIC_SKIP_DROP_TABLES', '').lower() == 'true'
+
+# 自定义表比较函数，用于跳过删除表操作
+def include_object(object, name, type_, reflected, compare_to):
+    if SKIP_DROP_TABLES and type_ == "table" and reflected and compare_to is None:
+        # 如果设置了跳过删除表，且当前操作是删除表，则跳过
+        print(f"跳过删除表 {name}")
+        return False
+    return True
+
 
 def run_migrations_offline():
     """
-    以“脱机”模式运行迁移。
+    以"脱机"模式运行迁移。
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
@@ -65,7 +90,8 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,  # 是否检查字段类型，字段长度
-        compare_server_default=True  # 是否比较在数据库中的默认值
+        compare_server_default=True,  # 是否比较在数据库中的默认值
+        include_object=include_object  # 使用自定义函数决定是否包含对象
     )
 
     with context.begin_transaction():
@@ -74,7 +100,7 @@ def run_migrations_offline():
 
 def run_migrations_online():
     """
-    以“在线”模式运行迁移。
+    以"在线"模式运行迁移。
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
@@ -87,7 +113,8 @@ def run_migrations_online():
             connection=connection,
             target_metadata=target_metadata,
             compare_type=True,  # 是否检查字段类型，字段长度
-            compare_server_default=True  # 是否比较在数据库中的默认值
+            compare_server_default=True,  # 是否比较在数据库中的默认值
+            include_object=include_object  # 使用自定义函数决定是否包含对象
         )
 
         with context.begin_transaction():

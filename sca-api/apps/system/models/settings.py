@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from infra.db.db_base import BaseModel
+from infra.db.base_model import BaseModel
 from sqlalchemy import String, Integer, ForeignKey, Boolean, Text
 
 

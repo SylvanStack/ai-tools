@@ -3,12 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from apps.user.crud import UserDal
 from apps.user.models import User, Role
-from infra.core.exception import CustomException
+from infra.exception.exception import CustomException
 from infra.utils import status
 from .validation import AuthValidation
 from fastapi import Request, Depends
 from application import settings
-from infra.core.database import db_getter
+from infra.db.database import db_getter
 from .validation.auth import Auth
 
 

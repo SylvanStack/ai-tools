@@ -1,7 +1,7 @@
 import re
 import pymysql
 from application.config.dev import SQLALCHEMY_DATABASE_URL
-from infra.core.logger import logger
+from infra.logger.logger import logger
 
 
 class DBGetter:

@@ -3,7 +3,7 @@ from typing import Type
 import inspect
 from sqlalchemy import inspect as model_inspect
 from pathlib import Path
-from infra.core.database import Base
+from infra.db.database import Base
 from scripts.crud_generate.utils.schema import SchemaField
 from sqlalchemy.sql.schema import Column as ColumnType
 from scripts.crud_generate.utils.generate_base import GenerateBase

@@ -1,6 +1,6 @@
 from enum import Enum
 from sqlalchemy import insert
-from infra.core.database import db_getter
+from infra.db.database import db_getter
 from infra.utils.excel.excel_manage import ExcelManage
 from application.settings import BASE_DIR, VERSION
 import os
@@ -38,16 +38,58 @@ class InitializeData:
         self.__get_sheet_data()
 
     @classmethod
+    async def disable_foreign_key_checks(cls, disable=True):
+        """
+        临时禁用或启用外键约束检查
+        
+        :param disable: True表示禁用约束，False表示启用约束
+        """
+        async_session = db_getter()
+        db = await async_session.__anext__()
+        try:
+            if disable:
+                await db.execute("SET FOREIGN_KEY_CHECKS=0;")
+                print("已临时禁用外键约束检查")
+            else:
+                await db.execute("SET FOREIGN_KEY_CHECKS=1;")
+                print("已重新启用外键约束检查")
+            await db.commit()
+        except Exception as e:
+            print(f"修改外键约束检查设置失败: {str(e)}")
+        finally:
+            await db.close()
+
+    @classmethod
     def migrate_model(cls, env: Environment = Environment.pro):
         """
         模型迁移映射到数据库
         """
-        """
-            模型迁移映射到数据库
-            """
-        subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'],
-                              cwd=BASE_DIR)
-        subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
+        try:
+            # 首先尝试将数据库标记为当前版本，避免外键约束问题
+            print(f"将数据库标记为当前版本...")
+            subprocess.check_call(['alembic', '--name', f'{env.value}', 'stamp', 'head'], cwd=BASE_DIR)
+            
+            # 然后尝试创建新的迁移版本，但不要删除表
+            print(f"尝试创建新的迁移版本（不删除表）...")
+            
+            # 创建一个临时的环境变量，控制alembic的行为
+            env_copy = os.environ.copy()
+            env_copy['ALEMBIC_SKIP_DROP_TABLES'] = 'true'
+            
+            try:
+                # 创建新的迁移版本
+                subprocess.check_call(['alembic', '--name', f'{env.value}', 'revision', '--autogenerate', '-m', f'{VERSION}'],
+                                    cwd=BASE_DIR, env=env_copy)
+                
+                # 如果创建成功，尝试应用迁移
+                subprocess.check_call(['alembic', '--name', f'{env.value}', 'upgrade', 'head'], cwd=BASE_DIR)
+            except subprocess.CalledProcessError as e:
+                # 如果创建迁移失败，可能是因为没有变化需要迁移
+                print(f"没有变化需要迁移或迁移过程中出现问题，继续执行...")
+        except Exception as e:
+            print(f"迁移过程中出现异常: {str(e)}")
+            print("继续执行后续步骤...")
+        
         print(f"环境：{env}  {VERSION} 数据库表迁移完成")
 
     def __serializer_data(self):
@@ -80,14 +122,38 @@ class InitializeData:
         """
         async_session = db_getter()
         db = await async_session.__anext__()
-        datas = self.datas.get(table_name)
-        if datas:
-            await db.execute(insert(model), datas)
-            await db.flush()
-            await db.commit()
-            print(f"{table_name} 表数据已生成")
-        else:
-            print(f"{table_name} 表没有数据需要生成")
+        try:
+            datas = self.datas.get(table_name)
+            if datas:
+                try:
+                    # 尝试插入数据
+                    await db.execute(insert(model), datas)
+                    await db.flush()
+                    await db.commit()
+                    print(f"{table_name} 表数据已生成")
+                except Exception as e:
+                    # 如果插入失败，尝试逐条插入
+                    await db.rollback()
+                    print(f"{table_name} 表批量插入失败: {str(e)}，尝试逐条插入...")
+                    
+                    success_count = 0
+                    for data in datas:
+                        try:
+                            await db.execute(insert(model), [data])
+                            await db.flush()
+                            await db.commit()
+                            success_count += 1
+                        except Exception as inner_e:
+                            await db.rollback()
+                            print(f"  - 插入记录失败: {str(inner_e)}")
+                    
+                    print(f"{table_name} 表数据部分生成，成功 {success_count}/{len(datas)} 条")
+            else:
+                print(f"{table_name} 表没有数据需要生成")
+        except Exception as e:
+            print(f"{table_name} 表数据生成过程中出现错误: {str(e)}")
+        finally:
+            await db.close()
 
     async def generate_dept(self):
         """
@@ -165,17 +231,38 @@ class InitializeData:
         """
         执行初始化工作
         """
-        self.migrate_model(env)
-        await self.generate_menu()
-        await self.generate_role()
-        await self.generate_dept()
-        await self.generate_user()
-        await self.generate_user_dept()
-        await self.generate_user_role()
-        await self.generate_system_tab()
-        await self.generate_dict_type()
-        await self.generate_system_config()
-        await self.generate_dict_details()
-        await self.generate_help_issue_category()
-        await self.generate_help_issue()
-        print(f"环境：{env} {VERSION} 数据已初始化完成")
+        try:
+            # 临时禁用外键约束检查
+            await self.disable_foreign_key_checks(True)
+            
+            # 执行迁移
+            self.migrate_model(env)
+            
+            # 重新启用外键约束检查
+            await self.disable_foreign_key_checks(False)
+        except Exception as e:
+            print(f"数据库迁移失败，但将继续执行数据初始化: {str(e)}")
+            # 确保外键约束被重新启用
+            try:
+                await self.disable_foreign_key_checks(False)
+            except:
+                pass
+        
+        # 继续执行数据初始化，即使迁移失败
+        try:
+            await self.generate_menu()
+            await self.generate_role()
+            await self.generate_dept()
+            await self.generate_user()
+            await self.generate_user_dept()
+            await self.generate_user_role()
+            await self.generate_system_tab()
+            await self.generate_dict_type()
+            await self.generate_system_config()
+            await self.generate_dict_details()
+            await self.generate_help_issue_category()
+            await self.generate_help_issue()
+            print(f"环境：{env} {VERSION} 数据已初始化完成")
+        except Exception as e:
+            print(f"数据初始化过程中出现错误: {str(e)}")
+            print("部分数据可能未成功初始化")

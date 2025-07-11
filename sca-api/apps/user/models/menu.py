@@ -1,4 +1,4 @@
-from infra.db.db_base import BaseModel
+from infra.db.base_model import BaseModel
 from sqlalchemy import String, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
