@@ -13,7 +13,7 @@ from apps.system.views.settings import app as system_settings_app
 from apps.system.views.sms import app as system_sms_app
 from apps.system.views.task import app as system_task_app
 # 操作记录
-from apps.record.views import app as record_app
+from apps.record.views.views import app as record_app
 # 帮助中心
 from apps.help.views.issue_category import app as help_category_app
 from apps.help.views.issue import app as help_issue_app
@@ -25,11 +25,11 @@ from apps.data_center.views.stock_market import app as data_center_app
 # 引入应用中的路由
 urlpatterns = [
     {"ApiRouter": auth_login_app, "prefix": "/auth", "tags": ["系统认证"]},
-    {"ApiRouter": auth_user_app, "prefix": "/auth", "tags": ["用户管理"]},
-    {"ApiRouter": auth_role_app, "prefix": "/auth", "tags": ["角色管理"]},
-    {"ApiRouter": auth_dept_app, "prefix": "/auth", "tags": ["部门管理"]},
-    {"ApiRouter": auth_menu_app, "prefix": "/auth", "tags": ["菜单管理"]},
-    {"ApiRouter": auth_test_app, "prefix": "/auth", "tags": ["测试"]},
+    {"ApiRouter": auth_user_app, "prefix": "/auth", "tags": ["权限管理-用户管理"]},
+    {"ApiRouter": auth_role_app, "prefix": "/auth", "tags": ["权限管理-角色管理"]},
+    {"ApiRouter": auth_dept_app, "prefix": "/auth", "tags": ["权限管理-部门管理"]},
+    {"ApiRouter": auth_menu_app, "prefix": "/auth", "tags": ["权限管理-菜单管理"]},
+    {"ApiRouter": auth_test_app, "prefix": "/auth", "tags": ["权限管理-测试"]},
     {"ApiRouter": system_dict_app, "prefix": "/system", "tags": ["系统管理-字典管理"]},
     {"ApiRouter": system_oss_app, "prefix": "/system", "tags": ["系统管理-存储管理"]},
     {"ApiRouter": system_settings_app, "prefix": "/system", "tags": ["系统管理-系统设置"]},

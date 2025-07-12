@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from redis.asyncio import Redis
 
-from apps.user.curd.user_dal import UserDal
+from apps.user.crud.user_dal import UserDal
 from apps.user.utils.current import OpenAuth
 from apps.user.utils.validation.auth import Auth
 from infra.redis.redis_db import redis_getter

@@ -4,7 +4,7 @@ from infra.core.dependencies import IdList
 from infra.utils.file.aliyun_oss import AliyunOSS, BucketConf
 from infra.utils.response import SuccessResponse
 from apps.resource import schemas, params, models
-from apps.resource.curd.images_dal import ImagesDal
+from apps.resource.crud.images_dal import ImagesDal
 from apps.user.utils.current import FullAdminAuth
 from apps.user.utils.validation.auth import Auth
 from application.settings import ALIYUN_OSS

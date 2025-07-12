@@ -26,8 +26,8 @@ from infra.utils.tools import test_password
 from infra.utils.validator_utils import vali_telephone
 from infra.utils.wx.oauth import WXOAuth
 # 修改导入路径，使用完全限定路径
-from apps.user.curd.dept_dal import DeptDal
-from apps.user.curd.role_dal import RoleDal
+from apps.user.crud.dept_dal import DeptDal
+from apps.user.crud.role_dal import RoleDal
 
 
 class UserDal(DalBase):

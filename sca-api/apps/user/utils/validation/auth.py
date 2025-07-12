@@ -8,7 +8,7 @@ from infra.exception.exception import CustomException
 from infra.utils import status
 from datetime import timedelta, datetime
 # 修改导入路径
-from apps.user.curd.user_dal import UserDal
+from apps.user.crud.user_dal import UserDal
 
 
 class Auth(BaseModel):

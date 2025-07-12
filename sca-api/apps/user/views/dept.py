@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from apps.user import schemas
-from apps.user.curd.dept_dal import DeptDal
+from apps.user.crud.dept_dal import DeptDal
 from apps.user.params import DeptParams
 from apps.user.utils.current import FullAdminAuth
 from apps.user.utils.validation.auth import Auth

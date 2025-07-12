@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from apps.help import schemas, params, models
-from apps.help.curd import IssueCategoryDal
+from apps.help.crud import IssueCategoryDal
 from apps.user.utils.current import AllUserAuth
 from apps.user.utils.validation.auth import Auth
 from infra.core.dependencies import IdList

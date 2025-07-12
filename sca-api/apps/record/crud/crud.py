@@ -1,7 +1,7 @@
 import random
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
-from . import models, schemas
+from apps.record import models, schemas
 from infra.db.crud import DalBase
 from infra.mongo.mongo_manage import MongoManage
 

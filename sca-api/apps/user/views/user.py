@@ -3,7 +3,7 @@ from redis.asyncio import Redis
 from sqlalchemy.orm import joinedload
 
 from apps.user import schemas, models
-from apps.user.curd.user_dal import UserDal
+from apps.user.crud.user_dal import UserDal
 from apps.user.params import UserParams
 from apps.user.utils.current import AllUserAuth, FullAdminAuth
 from apps.user.utils.validation.auth import Auth

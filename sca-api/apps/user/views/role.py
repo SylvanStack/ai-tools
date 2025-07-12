@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import joinedload
 
 from apps.user import schemas, models
-from apps.user.curd.role_dal import RoleDal
+from apps.user.crud.role_dal import RoleDal
 from apps.user.params import RoleParams
 from apps.user.utils.current import FullAdminAuth
 from apps.user.utils.validation.auth import Auth

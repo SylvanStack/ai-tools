@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from apps.user import schemas
-from apps.user.curd.menu_dal import MenuDal
-from apps.user.curd.role_dal import RoleDal
+from apps.user.crud.menu_dal import MenuDal
+from apps.user.crud.role_dal import RoleDal
 from apps.user.utils.current import FullAdminAuth
 from apps.user.utils.validation.auth import Auth
 from infra.core.dependencies import IdList

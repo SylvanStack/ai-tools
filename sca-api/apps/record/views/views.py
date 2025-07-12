@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-# @version        : 1.0
-# @Create Time    : 2021/10/24 16:44
-# @File           : resource.py
-# @IDE            : PyCharm
-# @desc           : 主要接口文件
-
 from fastapi import APIRouter, Depends
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from infra.utils.response import SuccessResponse
-from . import crud
+from apps.record.crud import crud
 from apps.user.utils.current import AllUserAuth
 from apps.user.utils.validation.auth import Auth
-from .params import LoginParams, OperationParams, SMSParams
+from apps.record.params import LoginParams, OperationParams, SMSParams
 from infra.mongo.mongo_db import mongo_getter
 
 app = APIRouter()

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from apps.user.curd.test_dal import TestDal
+from apps.user.crud.test_dal import TestDal
 from apps.user.utils.current import OpenAuth
 from apps.user.utils.validation.auth import Auth
 from infra.utils.response import SuccessResponse
