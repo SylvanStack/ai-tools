@@ -2,98 +2,13 @@ import akshare as ak
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from infra.db.crud import DalBase
-from . import models, schemas
-
-
-class StockMarketDal(DalBase):
-    """股票市场总貌数据访问层"""
-
-    def __init__(self, db: AsyncSession):
-        super(StockMarketDal, self).__init__()
-        self.db = db
-        self.model = models.StockMarket
-        self.schema = schemas.StockMarketOut
-
-    async def sync_sse_summary(self) -> dict:
-        """
-        同步上交所市场总貌数据
-        """
-        try:
-            # 获取上交所市场总貌数据
-            stock_sse_summary_df = ak.stock_sse_summary()
-            # 处理数据并保存
-            for _, row in stock_sse_summary_df.iterrows():
-                if row['项目'] == '报告时间':
-                    date = str(row['股票'])
-                    # 检查数据是否已存在
-                    exist_data = await self.get_data_by_filter(market="上交所", date=date)
-                    if exist_data:
-                        continue
-                    
-                    # 提取数据
-                    total_stocks = float(row['股票']) if row['项目'] == '上市股票' else None
-                    total_market_value = float(row['股票']) if row['项目'] == '总市值' else None
-                    circulating_market_value = float(row['股票']) if row['项目'] == '流通市值' else None
-                    total_share_capital = float(row['股票']) if row['项目'] == '总股本' else None
-                    circulating_share_capital = float(row['股票']) if row['项目'] == '流通股本' else None
-                    average_pe_ratio = float(row['股票']) if row['项目'] == '平均市盈率' else None
-                    
-                    # 创建数据
-                    data = schemas.StockMarket(
-                        market="上交所",
-                        date=date,
-                        total_stocks=total_stocks,
-                        total_market_value=total_market_value,
-                        circulating_market_value=circulating_market_value,
-                        total_share_capital=total_share_capital,
-                        circulating_share_capital=circulating_share_capital,
-                        average_pe_ratio=average_pe_ratio
-                    )
-                    await self.create_data(data=data)
-            
-            return {"status": "success", "message": "上交所市场总貌数据同步成功"}
-        except Exception as e:
-            return {"status": "error", "message": f"上交所市场总貌数据同步失败: {str(e)}"}
-
-    async def sync_szse_summary(self, date: str) -> dict:
-        """
-        同步深交所市场总貌数据
-        """
-        try:
-            # 获取深交所市场总貌数据
-            stock_szse_summary_df = ak.stock_szse_summary(date=date)
-            
-            # 检查数据是否已存在
-            exist_data = await self.get_data_by_filter(market="深交所", date=date)
-            if exist_data:
-                return {"status": "info", "message": f"深交所{date}数据已存在"}
-            
-            # 提取数据
-            stock_row = stock_szse_summary_df[stock_szse_summary_df['证券类别'] == '股票'].iloc[0]
-            
-            # 创建数据
-            data = schemas.StockMarket(
-                market="深交所",
-                date=date,
-                total_stocks=int(stock_row['数量']),
-                total_market_value=float(stock_row['总市值']),
-                circulating_market_value=float(stock_row['流通市值'])
-            )
-            await self.create_data(data=data)
-            
-            return {"status": "success", "message": f"深交所{date}市场总貌数据同步成功"}
-        except Exception as e:
-            return {"status": "error", "message": f"深交所市场总貌数据同步失败: {str(e)}"}
-
+from apps.data_center import models, schemas
 
 class StockInfoDal(DalBase):
     """股票基本信息数据访问层"""
 
     def __init__(self, db: AsyncSession):
-        super(StockInfoDal, self).__init__()
-        self.db = db
-        self.model = models.StockInfo
-        self.schema = schemas.StockInfoOut
+        super(StockInfoDal, self).__init__(db=db, model=models.StockInfo, schema=schemas.StockInfoOut)
 
     async def sync_stock_info(self, symbol: str) -> dict:
         """
@@ -164,10 +79,7 @@ class StockDailyDal(DalBase):
     """股票日线数据访问层"""
 
     def __init__(self, db: AsyncSession):
-        super(StockDailyDal, self).__init__()
-        self.db = db
-        self.model = models.StockDaily
-        self.schema = schemas.StockDailyOut
+        super(StockDailyDal, self).__init__(db=db, model=models.StockDaily, schema=schemas.StockDailyOut)
 
     async def sync_stock_daily(self, symbol: str, start_date: str, end_date: str, adjust: str = "") -> dict:
         """
@@ -239,10 +151,7 @@ class StockMinuteDal(DalBase):
     """股票分钟数据访问层"""
 
     def __init__(self, db: AsyncSession):
-        super(StockMinuteDal, self).__init__()
-        self.db = db
-        self.model = models.StockMinute
-        self.schema = schemas.StockMinuteOut
+        super(StockMinuteDal, self).__init__(db=db, model=models.StockMinute, schema=schemas.StockMinuteOut)
 
     async def sync_stock_minute(self, symbol: str, period: str, start_date: str = None, end_date: str = None, adjust: str = "") -> dict:
         """
@@ -258,6 +167,13 @@ class StockMinuteDal(DalBase):
                 adjust=adjust
             )
             
+            # 检查数据是否为空
+            if stock_zh_a_hist_min_em_df is None or stock_zh_a_hist_min_em_df.empty:
+                return {
+                    "status": "warning", 
+                    "message": f"股票{symbol} {period}分钟数据为空，可能是非交易日或数据不可用"
+                }
+            
             success_count = 0
             update_count = 0
             
@@ -272,16 +188,27 @@ class StockMinuteDal(DalBase):
                     period=period
                 )
                 
+                # 安全地转换数值
+                def safe_convert(value, convert_func=float, default=0):
+                    if value is None:
+                        return default
+                    try:
+                        if isinstance(value, str):
+                            return convert_func(value.replace(',', ''))
+                        return convert_func(value)
+                    except (ValueError, TypeError):
+                        return default
+                
                 data = schemas.StockMinute(
                     symbol=symbol,
                     trade_time=trade_time,
                     period=period,
-                    open_price=float(row['开盘']),
-                    close_price=float(row['收盘']),
-                    high_price=float(row['最高']),
-                    low_price=float(row['最低']),
-                    volume=int(row['成交量']),
-                    amount=float(row['成交额'])
+                    open_price=safe_convert(row.get('开盘')),
+                    close_price=safe_convert(row.get('收盘')),
+                    high_price=safe_convert(row.get('最高')),
+                    low_price=safe_convert(row.get('最低')),
+                    volume=safe_convert(row.get('成交量'), int),
+                    amount=safe_convert(row.get('成交额'))
                 )
                 
                 if exist_data:

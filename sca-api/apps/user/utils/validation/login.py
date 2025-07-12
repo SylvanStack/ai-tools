@@ -2,7 +2,9 @@ from fastapi import Request
 from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 from application.settings import DEFAULT_AUTH_ERROR_MAX_NUMBER, DEMO, REDIS_DB_ENABLE
-from apps.user import crud, schemas
+from apps.user import schemas
+# 修改导入语句
+from apps.user.curd.user_dal import UserDal
 from infra.redis.redis_db import redis_getter
 from infra.utils.validator_utils import vali_telephone
 from infra.utils.count import Count
@@ -47,7 +49,7 @@ class LoginValidation:
         if data.platform not in ["0", "1"] or data.method not in ["0", "1"]:
             self.result.msg = "无效参数"
             return self.result
-        user = await crud.UserDal(db).get_data(telephone=data.telephone, v_return_none=True)
+        user = await UserDal(db).get_data(telephone=data.telephone, v_return_none=True)
         if not user:
             self.result.msg = "该手机号不存在！"
             return self.result
@@ -79,5 +81,5 @@ class LoginValidation:
             self.result.msg = "OK"
             self.result.status = True
             self.result.user = schemas.UserPasswordOut.model_validate(user)
-            await crud.UserDal(db).update_login_info(user, request.client.host)
+            await UserDal(db).update_login_info(user, request.client.host)
         return self.result

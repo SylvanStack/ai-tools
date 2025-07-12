@@ -1,6 +1,2 @@
-from .stock import (
-    StockMarketParams,
-    StockInfoParams,
-    StockDailyParams,
-    StockMinuteParams
-) 
+from .stock import StockInfoParams,StockDailyParams,StockMinuteParams
+from .stock_market_params import StockMarketParams

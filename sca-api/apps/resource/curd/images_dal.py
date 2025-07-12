@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from infra.db.crud import DalBase
-from . import models, schemas
+from apps.resource import models, schemas
 
 
 class ImagesDal(DalBase):

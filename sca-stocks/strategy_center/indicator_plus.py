@@ -3,10 +3,6 @@
 提供扩展的技术分析函数，完美兼容通达信或同花顺
 """
 import math
-import numpy as np
-import pandas as pd
-from utils.indicator_utils import *
-from utils.advance_indicator import *
 
 
 # 保留通达信风格的函数名称以保持兼容性

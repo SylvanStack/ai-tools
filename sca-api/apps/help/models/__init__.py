@@ -1,4 +1,2 @@
-
-
-
-from .issue import Issue, IssueCategory
+from .issue import Issue
+from .issue_category import IssueCategory

@@ -211,6 +211,14 @@ class DalBase:
         self.query_builder = QueryBuilder(model) if model else None
         self.serializer = DataSerializer(schema)
         self.session_operator = SessionOperator(db) if db else None
+        
+    async def get_data_by_filter(self, **kwargs) -> Any:
+        """
+        根据过滤条件获取单个数据
+        :param kwargs: 过滤条件
+        :return: 数据对象，如果不存在则返回None
+        """
+        return await self.get_data(v_return_none=True, **kwargs)
 
     async def get_data(
             self,

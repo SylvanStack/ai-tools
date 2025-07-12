@@ -31,7 +31,7 @@ class CreateApp:
         self.create_pag(os.path.join(self.app_path, "models"))
         self.create_pag(os.path.join(self.app_path, "params"))
         self.create_pag(os.path.join(self.app_path, "schemas"))
-        self.generate_file("views.py")
+        self.generate_file("resource.py")
         self.generate_file("crud.py")
         print("App 目录生成结束", self.app_path)
 

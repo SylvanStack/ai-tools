@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Depends, Query, Path
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import joinedload
-from infra.db.database import db_getter
-from infra.utils.response import SuccessResponse
-from infra.core.dependencies import IdList
+
 from apps.user.utils.current import AllUserAuth
 from apps.user.utils.validation.auth import Auth
-from . import schemas, crud, params, models
+from infra.utils.response import SuccessResponse
+from apps.data_center import schemas, params, models
+from apps.data_center.curd import crud
 
 app = APIRouter()
 
@@ -108,8 +107,11 @@ async def sync_all_stock_info(auth: Auth = Depends(AllUserAuth())):
     """
     同步所有A股股票基本信息
     """
-    result = await crud.StockInfoDal(auth.db).sync_all_stocks()
-    return SuccessResponse(result)
+    try:
+        result = await crud.StockInfoDal(auth.db).sync_all_stocks()
+        return SuccessResponse(result)
+    except Exception as e:
+        return SuccessResponse({"status": "error", "message": f"股票信息同步失败: {str(e)}"})
 
 
 ###########################################################

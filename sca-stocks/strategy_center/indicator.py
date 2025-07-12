@@ -2,10 +2,6 @@
 技术指标工具类
 提供基于核心指标和高级指标的技术分析函数，完美兼容通达信或同花顺
 """
-import numpy as np
-import pandas as pd
-from utils.indicator_utils import *
-from utils.advance_indicator import *
 
 
 def MACD(close, short_period=12, long_period=26, signal_period=9):

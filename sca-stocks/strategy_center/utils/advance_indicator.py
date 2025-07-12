@@ -2,7 +2,7 @@
 高级指标工具类
 提供基于核心指标的应用层函数，完美兼容通达信或同花顺
 """
-from utils.indicator_utils import *
+from strategy_center.utils.indicator_utils import *
 import numpy as np
 import pandas as pd
 

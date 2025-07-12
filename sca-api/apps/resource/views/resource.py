@@ -3,7 +3,8 @@ from sqlalchemy.orm import joinedload
 from infra.core.dependencies import IdList
 from infra.utils.file.aliyun_oss import AliyunOSS, BucketConf
 from infra.utils.response import SuccessResponse
-from . import schemas, crud, params, models
+from apps.resource import schemas, params, models
+from apps.resource.curd.images_dal import ImagesDal
 from apps.user.utils.current import FullAdminAuth
 from apps.user.utils.validation.auth import Auth
 from application.settings import ALIYUN_OSS
@@ -19,7 +20,7 @@ async def get_images_list(p: params.ImagesParams = Depends(), auth: Auth = Depen
     model = models.Images
     v_options = [joinedload(model.create_user)]
     v_schema = schemas.ImagesOut
-    datas, count = await crud.ImagesDal(auth.db).get_datas(
+    datas, count = await ImagesDal(auth.db).get_datas(
         **p.dict(),
         v_options=v_options,
         v_schema=v_schema,
@@ -38,15 +39,15 @@ async def create_images(file: UploadFile, auth: Auth = Depends(FullAdminAuth()))
         create_user_id=auth.user.id
     )
 
-    return SuccessResponse(await crud.ImagesDal(auth.db).create_data(data=data))
+    return SuccessResponse(await ImagesDal(auth.db).create_data(data=data))
 
 
 @app.delete("/images", summary="删除图片", description="硬删除")
 async def delete_images(ids: IdList = Depends(), auth: Auth = Depends(FullAdminAuth())):
-    await crud.ImagesDal(auth.db).delete_datas(ids.ids, v_soft=False)
+    await ImagesDal(auth.db).delete_datas(ids.ids, v_soft=False)
     return SuccessResponse("删除成功")
 
 
 @app.get("/images/{data_id}", summary="获取图片信息")
 async def get_images(data_id: int, auth: Auth = Depends(FullAdminAuth())):
-    return SuccessResponse(await crud.ImagesDal(auth.db).get_data(data_id, v_schema=schemas.ImagesSimpleOut))
+    return SuccessResponse(await ImagesDal(auth.db).get_data(data_id, v_schema=schemas.ImagesSimpleOut))

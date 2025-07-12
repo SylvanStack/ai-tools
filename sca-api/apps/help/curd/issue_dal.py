@@ -1,8 +1,6 @@
-
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from infra.db.crud import DalBase
-from . import models, schemas
+from apps.help import models, schemas
 
 
 class IssueDal(DalBase):
@@ -17,9 +15,3 @@ class IssueDal(DalBase):
         obj: models.Issue = await self.get_data(data_id)
         obj.view_number = obj.view_number + 1 if obj.view_number else 1
         await self.flush(obj)
-
-
-class IssueCategoryDal(DalBase):
-
-    def __init__(self, db: AsyncSession):
-        super(IssueCategoryDal, self).__init__(db=db, model=models.IssueCategory, schema=schemas.IssueCategorySimpleOut)

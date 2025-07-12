@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @version        : 1.0
-# @Create Time    : 2021/10/24 16:44
-# @File           : views.py
-# @IDE            : PyCharm
-# @desc           : 主要接口文件
-
 from redis.asyncio import Redis
 from fastapi import APIRouter, Depends, Body, UploadFile, Form, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -22,7 +15,7 @@ from infra.core.dependencies import IdList
 from apps.user.utils.current import AllUserAuth, FullAdminAuth, OpenAuth
 from apps.user.utils.validation.auth import Auth
 from .params import DictTypeParams, DictDetailParams, TaskParams
-from apps.user import crud as auth_crud
+from apps.user.curd.user_dal import UserDal
 from .params.task import TaskRecordParams
 
 app = APIRouter()
@@ -137,7 +130,7 @@ async def upload_image_to_local(file: UploadFile, path: str = Form(...)):
 ###########################################################
 @app.post("/sms/send", summary="发送短信验证码（阿里云服务）")
 async def sms_send(telephone: str, rd: Redis = Depends(redis_getter), auth: Auth = Depends(OpenAuth())):
-    user = await auth_crud.UserDal(auth.db).get_data(telephone=telephone, v_return_none=True)
+    user = await UserDal(auth.db).get_data(telephone=telephone, v_return_none=True)
     if not user:
         return ErrorResponse("手机号不存在！")
     sms = CodeSMS(telephone, rd)

@@ -26,7 +26,8 @@ from application import settings
 from .login_manage import LoginManage
 from .validation import LoginForm, WXLoginForm
 from apps.record.models import LoginRecord
-from apps.user.crud import MenuDal, UserDal
+from apps.user.curd.menu_dal import MenuDal
+from apps.user.curd.user_dal import UserDal
 from apps.user.models import User
 from .current import FullAdminAuth
 from .validation.auth import Auth

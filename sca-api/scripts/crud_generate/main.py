@@ -41,8 +41,8 @@ class CrudGenerate(GenerateBase):
         self.params_dir_path = self.app_dir_path / "params"
         # crud 文件地址
         self.crud_file_path = self.app_dir_path / "crud.py"
-        # view 文件地址
-        self.view_file_path = self.app_dir_path / "views.py"
+        # views 文件地址
+        self.view_file_path = self.app_dir_path / "resource.py"
 
         if en_name:
             self.en_name = en_name

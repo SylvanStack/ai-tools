@@ -44,18 +44,18 @@ class ViewGenerate(GenerateBase):
         self.model_file_path = Path(inspect.getfile(sys.modules[model.__module__]))
         # model 文件 app 路径
         self.app_dir_path = self.model_file_path.parent.parent
-        # view 文件地址
-        self.view_file_path = self.app_dir_path / "views.py"
+        # views 文件地址
+        self.view_file_path = self.app_dir_path / "resource.py"
 
     def write_generate_code(self):
         """
-        生成 view 文件，以及代码内容
+        生成 views 文件，以及代码内容
         :return:
         """
         if self.view_file_path.exists():
             codes = self.file_code_split_module(self.view_file_path)
             if codes:
-                print(f"==========view 文件已存在并已有代码内容，正在追加新代码============")
+                print(f"==========views 文件已存在并已有代码内容，正在追加新代码============")
                 if not codes[0]:
                     # 无文件注释则添加文件注释
                     codes[0] = self.generate_file_desc(self.view_file_path.name, "1.0", "视图层")
@@ -68,13 +68,13 @@ class ViewGenerate(GenerateBase):
                     code += "\n\napp = APIRouter()"
                 code += codes[2]
                 self.view_file_path.write_text(code, "utf-8")
-                print(f"=================view 代码已创建完成=====================")
+                print(f"=================views 代码已创建完成=====================")
                 return
         else:
             self.view_file_path.touch()
             code = self.generate_code()
             self.view_file_path.write_text(code, encoding="utf-8")
-            print(f"===============view 代码创建完成==================")
+            print(f"===============views 代码创建完成==================")
 
     def generate_code(self) -> str:
         """
