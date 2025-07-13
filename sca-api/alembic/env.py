@@ -39,36 +39,32 @@ sys.path.append(BASE_DIR)
 
 # 从环境变量中读取数据库连接参数
 section = config.config_ini_section
-config.set_section_option(section, "sqlalchemy.url", 
-    f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '123456')}@"
-    f"{os.getenv('DB_HOST', '127.0.0.1')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'sca-api')}")
+config.set_section_option(section, "sqlalchemy.url",
+                          f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '123456')}@"
+                          f"{os.getenv('DB_HOST', '127.0.0.1')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'sca-api')}")
 
 # 导入项目中的基本映射类，与 需要迁移的 ORM 模型
 # 导入所有模块的模型
 # data_center 模块
-from apps.data_center.models.stock import StockMarket, StockInfo, StockDaily, StockMinute
+from apps.data_center.models import SseMarket, SzseMarket, StockInfo, StockDaily, StockMinute, StockTick
 # record 模块
-from apps.record.models.login import LoginRecord
-from apps.record.models.sms import SMSSendRecord
+from apps.record.models import LoginRecord, SMSSendRecord
 # user 模块
-from apps.user.models.user import User
-from apps.user.models.role import Role
-from apps.user.models.menu import Menu
-from apps.user.models.dept import Dept
-from apps.user.models.m2m import auth_user_roles, auth_user_depts, auth_role_depts
+from apps.user.models import User, Role, Menu, Dept, auth_user_roles, auth_user_depts, auth_role_depts
 # system 模块
 from apps.system.models.settings import SystemSettings, SystemSettingsTab
 from apps.system.models.dict import DictType, DictDetails
 # resource 模块
 from apps.resource.models.images import Images
 # help 模块
-from apps.help.models.issue import Issue, IssueCategory
+from apps.help.models import Issue, IssueCategory
 
 # 修改配置中的参数
 target_metadata = Base.metadata
 
 # 检查是否需要跳过删除表操作
 SKIP_DROP_TABLES = os.environ.get('ALEMBIC_SKIP_DROP_TABLES', '').lower() == 'true'
+
 
 # 自定义表比较函数，用于跳过删除表操作
 def include_object(object, name, type_, reflected, compare_to):

@@ -8,6 +8,13 @@ from fastapi.openapi.docs import (
 )
 
 
+def register_docs(app: FastAPI):
+    """
+    注册Swagger文档
+    """
+    custom_api_docs(app)
+
+
 def custom_api_docs(app: FastAPI):
     """
     自定义配置接口本地静态文档

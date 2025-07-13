@@ -151,6 +151,7 @@ class DataSerializer:
     """
     数据序列化器，负责数据的序列化和反序列化
     """
+
     def __init__(self, schema: Any = None):
         self.schema = schema
 
@@ -172,6 +173,7 @@ class SessionOperator:
     """
     会话操作器，负责操作数据库会话中的对象
     """
+
     def __init__(self, db: AsyncSession):
         """
         初始化会话操作器
@@ -204,6 +206,7 @@ class DalBase:
     """
     数据访问层基类
     """
+
     def __init__(self, db: AsyncSession = None, model: Any = None, schema: Any = None):
         self.db = db
         self.model = model
@@ -211,7 +214,7 @@ class DalBase:
         self.query_builder = QueryBuilder(model) if model else None
         self.serializer = DataSerializer(schema)
         self.session_operator = SessionOperator(db) if db else None
-        
+
     async def get_data_by_filter(self, **kwargs) -> Any:
         """
         根据过滤条件获取单个数据

@@ -30,7 +30,8 @@ def create_app():
     redoc_url： 配置 Redoc 文档的路由地址，如果禁用则为None，默认为 /redoc
     openapi_url：配置接口文件json数据文件路由地址，如果禁用则为None，默认为/openapi.json
     """
-    app = FastAPI(title="sca-api", description="脚手架API", version=settings.VERSION, lifespan=lifespan, docs_url=None, redoc_url=None)
+    # 使用urls.py中定义的FastAPI实例
+    app = urls.app
     import_modules(settings.MIDDLEWARES, "中间件", app=app)
     # 全局异常捕捉处理
     register_exception(app)
@@ -46,9 +47,6 @@ def create_app():
     # 挂在静态目录
     if settings.STATIC_ENABLE:
         app.mount(settings.STATIC_URL, app=StaticFiles(directory=settings.STATIC_ROOT))
-    # 引入应用中的路由
-    for url in urls.urlpatterns:
-        app.include_router(url["ApiRouter"], prefix=url["prefix"], tags=url["tags"])
     # 配置接口文档静态资源
     custom_api_docs(app)
     return app
